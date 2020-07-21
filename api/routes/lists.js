@@ -24,10 +24,6 @@ listRouter.get('/:id', async (request, response, next) => {
     if (list) {
       response.json(list);
     } else {
-      // This error is thrown when a valid id is supplied that doesn't match a list
-      // If an invalid id is given, a CastError will be thrown and passed to errorHandler
-      // TODO: Figure out why errorHandler doesn't correctly detect the CastError and
-      // then make the error message it gives off more detailed
       response.status(404).send({ error: `no list found with id ${request.params.id}` });
     }
   } catch (exception) {
