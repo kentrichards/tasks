@@ -1,9 +1,9 @@
 const express = require('express');
+const tasksRouter = require('./routes/tasksRouter');
 
 const app = express();
 
-app.get('/', (_req, res) => {
-  res.send('hello world!');
-});
+// App routes
+app.use('/api/tasks', tasksRouter);
 
 module.exports = app;
