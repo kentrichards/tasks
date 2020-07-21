@@ -3,7 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 const config = require('./utils/config');
-const tasksRouter = require('./routes/tasksRouter');
+const listRouter = require('./routes/listRouter');
+const taskRouter = require('./routes/taskRouter');
 const errorHandler = require('./middleware/errorHandler');
 const requestLogger = require('./middleware/requestLogger');
 const unknownEndpoint = require('./middleware/unknownEndpoint');
@@ -33,8 +34,9 @@ app.use(express.json());
 
 app.use(requestLogger);
 
-// App routes
-app.use('/api/tasks', tasksRouter);
+// Routers
+app.use('/api/lists', listRouter);
+app.use('/api/tasks', taskRouter);
 
 app.use(unknownEndpoint);
 
