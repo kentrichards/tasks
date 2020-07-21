@@ -1,11 +1,28 @@
 const cors = require('cors');
 const express = require('express');
-const requestLogger = require('./middleware/requestLogger');
+const mongoose = require('mongoose');
+const logger = require('./utils/logger');
+const config = require('./utils/config');
 const tasksRouter = require('./routes/tasksRouter');
-const unknownEndpoint = require('./middleware/unknownEndpoint');
 const errorHandler = require('./middleware/errorHandler');
+const requestLogger = require('./middleware/requestLogger');
+const unknownEndpoint = require('./middleware/unknownEndpoint');
 
 const app = express();
+
+logger.info('connecting to', config.MONGODB_URI);
+
+mongoose
+  .connect(config.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    logger.info('connected to MongoDB\n');
+  })
+  .catch((error) => {
+    logger.error('error connecting to MongoDB:', error.message);
+  });
 
 // Enables cross-origin resource sharing
 app.use(cors());
