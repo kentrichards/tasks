@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 // Show the queries being sent to the database
 mongoose.set('debug', true);
 
+// Required for 'findByIdAndUpdate()'
+mongoose.set('useFindAndModify', true);
+
 const listSchema = new mongoose.Schema({
   name: {
     type: String,
