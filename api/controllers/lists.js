@@ -13,7 +13,7 @@ const fetchList = wrapAsync(async (request, response, next) => {
   const list = await List.findById(request.params.id);
 
   if (!list) {
-    next({
+    return next({
       message: `no list found with id ${request.params.id}`,
       statusCode: 404,
     });
@@ -35,4 +35,15 @@ const deleteList = wrapAsync(async (request, response) => {
   response.status(204).end();
 });
 
-module.exports = { createList, fetchList, fetchLists, deleteList };
+// TODO: Ensure only supplied properties are updated
+// TODO: Ensure 'name' is not set to null or some other non-string value
+const updateList = wrapAsync(async (request, response) => {
+  const list = { name: request.body.name };
+
+  // { new: true } tells Mongoose to return the updated list, not the original
+  const result = await List.findByIdAndUpdate(request.params.id, list, { new: true });
+
+  response.json(result);
+});
+
+module.exports = { createList, fetchList, fetchLists, deleteList, updateList };
