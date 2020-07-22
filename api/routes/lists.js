@@ -1,4 +1,5 @@
 const listRouter = require('express').Router();
+const wrapAsync = require('../middleware/wrapAsync');
 const List = require('../models/list');
 
 listRouter.get('/', (_request, response) => {
@@ -6,29 +7,26 @@ listRouter.get('/', (_request, response) => {
 });
 
 // Create a new list
-listRouter.post('/', async (request, response, next) => {
-  try {
-    const newList = new List({ name: request.body.name });
-    const result = await newList.save();
-    response.status(201).json(result);
-  } catch (exception) {
-    next(exception);
-  }
+const createList = wrapAsync(async (request, response) => {
+  const newList = new List({ name: request.body.name });
+  const result = await newList.save();
+  response.status(201).json(result);
 });
+listRouter.post('/', createList);
 
 // Fetch an individual list
-listRouter.get('/:id', async (request, response, next) => {
-  try {
-    const list = await List.findById(request.params.id);
+const fetchList = wrapAsync(async (request, response, next) => {
+  const list = await List.findById(request.params.id);
 
-    if (list) {
-      response.json(list);
-    } else {
-      response.status(404).send({ error: `no list found with id ${request.params.id}` });
-    }
-  } catch (exception) {
-    next(exception);
+  if (list) {
+    response.json(list);
+  } else {
+    next({
+      message: `no list found with id ${request.params.id}`,
+      statusCode: 404,
+    });
   }
 });
+listRouter.get('/:id', fetchList);
 
 module.exports = listRouter;
