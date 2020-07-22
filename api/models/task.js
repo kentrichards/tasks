@@ -3,9 +3,6 @@ const mongoose = require('mongoose');
 // Show the queries being sent to the database
 mongoose.set('debug', true);
 
-// Required for 'findByIdAndUpdate()'
-mongoose.set('useFindAndModify', true);
-
 const taskSchema = new mongoose.Schema({
   text: {
     type: String,
