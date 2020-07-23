@@ -1,5 +1,32 @@
+const objectIdIsValid = require('../utils/objectIdIsValid');
 const wrapAsync = require('../middleware/wrapAsync');
 const Task = require('../models/task');
+
+const createTask = wrapAsync(async (request, response, next) => {
+  const { text, important, listId } = request.body;
+
+  // TODO: Need to also check that the ObjectId is currently in use
+  if (!objectIdIsValid(listId)) {
+    next({
+      message: `${listId} is not a valid ObjectId`,
+      statusCode: 400,
+    });
+
+    return;
+  }
+
+  // 'date' and 'completed' will be given default values
+  // If 'important' is undefined, it will default to false
+  const newTask = new Task({
+    text,
+    important,
+    listId,
+  });
+  const result = await newTask.save();
+
+  // Returns '201 Created' on success
+  response.status(201).json(result);
+});
 
 const fetchTask = wrapAsync(async (request, response, next) => {
   const task = await Task.findById(request.params.id);
@@ -27,4 +54,4 @@ const deleteTask = wrapAsync(async (request, response) => {
   response.status(204).end();
 });
 
-module.exports = { fetchTask, fetchTasks, deleteTask };
+module.exports = { createTask, fetchTask, fetchTasks, deleteTask };

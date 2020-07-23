@@ -1,0 +1,8 @@
+POST http://localhost:3001/api/tasks
+Content-Type: application/json
+
+{
+    "text": "add more tests",
+    "important": true,
+    "listId": "5f1778e269547bd56f1e85f6"
+}
