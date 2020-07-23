@@ -1,0 +1,9 @@
+PUT http://localhost:3001/api/tasks/5f19bd30b237512a4f6a1e11
+Content-Type: application/json
+
+{
+    "text": "why is this broken",
+    "completed": false,
+    "important": true,
+    "listId": "5f1778e269547bd56f1e85f6"
+}

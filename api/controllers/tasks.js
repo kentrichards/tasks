@@ -6,6 +6,8 @@ const createTask = wrapAsync(async (request, response, next) => {
   const { text, important, listId } = request.body;
 
   // TODO: Need to also check that the ObjectId is currently in use
+  // This might not be needed? Schema may handle all rejections anyway
+  // TODO: Test with 12 character ObjectId
   if (!objectIdIsValid(listId)) {
     next({
       message: `${listId} is not a valid ObjectId`,
@@ -54,4 +56,11 @@ const deleteTask = wrapAsync(async (request, response) => {
   response.status(204).end();
 });
 
-module.exports = { createTask, fetchTask, fetchTasks, deleteTask };
+const updateTask = wrapAsync(async (request, response) => {
+  // { new: true } tells Mongoose to return the updated list, not the original
+  const result = await Task.findByIdAndUpdate(request.params.id, request.body, { new: true });
+
+  response.json(result);
+});
+
+module.exports = { createTask, fetchTask, fetchTasks, deleteTask, updateTask };
