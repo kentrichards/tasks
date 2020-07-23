@@ -20,7 +20,7 @@ const taskSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  list: {
+  listId: {
     type: mongoose.ObjectId,
     required: true,
   },
