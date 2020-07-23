@@ -12,14 +12,14 @@ const createList = wrapAsync(async (request, response) => {
 const fetchList = wrapAsync(async (request, response, next) => {
   const list = await List.findById(request.params.id);
 
-  if (!list) {
-    return next({
+  if (list) {
+    response.json(list);
+  } else {
+    next({
       message: `no list found with id ${request.params.id}`,
       statusCode: 404,
     });
   }
-
-  response.json(list);
 });
 
 const fetchLists = wrapAsync(async (_request, response) => {
