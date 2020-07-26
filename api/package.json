@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "NODE_ENV=production node index.js",
+    "test": "NODE_ENV=test jest --verbose --runInBand"
   },
   "author": "Kent Richards",
   "license": "MIT",
