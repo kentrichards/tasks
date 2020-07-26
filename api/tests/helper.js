@@ -1,3 +1,5 @@
+const List = require('../models/list');
+
 const initialLists = [
   {
     name: 'Books to Read',
@@ -7,4 +9,9 @@ const initialLists = [
   },
 ];
 
-module.exports = { initialLists };
+const getLists = async () => {
+  const lists = await List.find({});
+  return lists.map((list) => list.toJSON());
+};
+
+module.exports = { initialLists, getLists };
