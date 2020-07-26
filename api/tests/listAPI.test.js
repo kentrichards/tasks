@@ -74,5 +74,35 @@ describe('adding new lists', () => {
   });
 });
 
+describe('fetching one list', () => {
+  test('a specific list can be retrieved', async () => {
+    const listsAtStart = await helper.getLists();
+    const listToView = listsAtStart[0];
+
+    const resultList = await api
+      .get(`/api/lists/${listToView.id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    // Don't check for full equality because of the date field
+    expect(resultList.body.id).toEqual(listToView.id);
+    expect(resultList.body.name).toEqual(listToView.name);
+  });
+
+  test('fetching a list with a non-existing id returns an error', async () => {
+    const nonExistingId = helper.nonExistingId();
+
+    // Server should return 404 'Not Found', because the request was valid
+    await api.get(`/api/lists/${nonExistingId}`).expect(404);
+  });
+
+  test('fetching a list with an invalid id returns an error', async () => {
+    const invalidId = 1;
+
+    // Server should return 400 'Bad Request'
+    await api.get(`/api/lists/${invalidId}`).expect(400);
+  });
+});
+
 // Clean-up when all tests have finished running
 afterAll(() => mongoose.connection.close());

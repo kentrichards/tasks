@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const List = require('../models/list');
 
 const initialLists = [
@@ -14,4 +15,7 @@ const getLists = async () => {
   return lists.map((list) => list.toJSON());
 };
 
-module.exports = { initialLists, getLists };
+// Returns a valid id that is not associated with any document
+const nonExistingId = () => mongoose.Types.ObjectId();
+
+module.exports = { initialLists, getLists, nonExistingId };
