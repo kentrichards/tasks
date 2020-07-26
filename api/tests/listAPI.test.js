@@ -3,6 +3,7 @@ const supertest = require('supertest');
 const app = require('../app');
 const List = require('../models/list');
 const helper = require('./helper');
+const lists = require('../controllers/lists');
 
 const api = supertest(app);
 
@@ -92,17 +93,48 @@ describe('fetching one list', () => {
   test('fetching a list with a non-existing id returns an error', async () => {
     const nonExistingId = helper.nonExistingId();
 
-    // Server should return 404 'Not Found', because the request was valid
+    // Server should return '404 Not Found', because the request was valid
     await api.get(`/api/lists/${nonExistingId}`).expect(404);
   });
 
   test('fetching a list with an invalid id returns an error', async () => {
     const invalidId = 1;
 
-    // Server should return 400 'Bad Request'
+    // Server should return '400 Bad Request'
     await api.get(`/api/lists/${invalidId}`).expect(400);
   });
 });
+
+describe('deleting lists', () => {
+  test('a list can be deleted', async () => {
+    const listsAtStart = await helper.getLists();
+    const listToDelete = listsAtStart[0];
+
+    // Server should return '204 No Content'
+    await api.delete(`/api/lists/${listToDelete.id}`).expect(204);
+
+    // Verify the database has one less list
+    const listsAtEnd = await helper.getLists();
+    expect(listsAtEnd).toHaveLength(helper.initialLists.length - 1);
+
+    // Verify we deleted list's name has been removed
+    const names = listsAtEnd.map((l) => l.name);
+    expect(names).not.toContain(listToDelete.name);
+  });
+
+  test("deleting list with non-existing id doesn't do anything", async () => {
+    const nonExistingId = helper.nonExistingId();
+
+    // Server should still return '204 No Content' even if nothing happens
+    await api.delete(`/api/lists/${nonExistingId}`).expect(204);
+
+    // No lists should have been harmed in the making of this request
+    const listsAtEnd = await helper.getLists();
+    expect(listsAtEnd).toHaveLength(helper.initialLists.length);
+  });
+});
+
+// TODO: Add tests for updating a list
 
 // Clean-up when all tests have finished running
 afterAll(() => mongoose.connection.close());
