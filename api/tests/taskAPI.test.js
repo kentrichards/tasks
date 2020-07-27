@@ -78,5 +78,37 @@ describe('adding new tasks', () => {
   });
 });
 
+describe('fetching one task', () => {
+  test('a specific task can be retrieved', async () => {
+    const tasksAtStart = await helper.getTasks();
+    const taskToView = tasksAtStart[0];
+
+    const resultTask = await api
+      .get(`/api/tasks/${taskToView.id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    // Don't check for full equality because of the date field
+    expect(resultTask.body.id).toEqual(taskToView.id);
+    expect(resultTask.body.text).toEqual(taskToView.text);
+    // https://github.com/facebook/jest/issues/8475#issuecomment-537830532
+    expect(JSON.stringify(resultTask.body.listId)).toEqual(JSON.stringify(taskToView.listId));
+  });
+
+  test('fetching a task with a non-existing id returns an error', async () => {
+    const nonExistingId = helper.nonExistingId();
+
+    // Server should return '404 Not Found', because the request was valid
+    await api.get(`/api/tasks/${nonExistingId}`).expect(404);
+  });
+
+  test('fetching a task with an invalid id returns an error', async () => {
+    const invalidId = 1;
+
+    // Server should return '400 Bad Request'
+    await api.get(`/api/tasks/${invalidId}`).expect(400);
+  });
+});
+
 // Clean-up when all tests have finished running
 afterAll(() => mongoose.connection.close());
