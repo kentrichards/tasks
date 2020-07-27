@@ -3,7 +3,6 @@ const supertest = require('supertest');
 const app = require('../app');
 const List = require('../models/list');
 const helper = require('./helper');
-const lists = require('../controllers/lists');
 
 const api = supertest(app);
 
