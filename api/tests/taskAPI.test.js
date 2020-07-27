@@ -90,6 +90,22 @@ describe('adding new tasks', () => {
     const tasksAtEnd = await helper.getTasks();
     expect(tasksAtEnd).toHaveLength(helper.initialTasks.length);
   });
+
+  test("cannot add task to list that doesn't exist", async () => {
+    const taskWithNonExistingListId = {
+      text: 'buy a puppy',
+      listId: helper.nonExistingId(),
+    };
+
+    await api.post('/api/tasks').send(taskWithNonExistingListId).expect(400);
+
+    // Database should not have added our task
+    const tasksAtEnd = await helper.getTasks();
+    expect(tasksAtEnd).toHaveLength(helper.initialTasks.length);
+
+    const texts = tasksAtEnd.map((t) => t.text);
+    expect(texts).not.toContain(taskWithNonExistingListId.text);
+  });
 });
 
 describe('fetching one task', () => {
