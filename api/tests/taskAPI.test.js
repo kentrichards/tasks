@@ -11,6 +11,7 @@ const api = supertest(app);
 beforeEach(async () => {
   // Wipe the database
   await Task.deleteMany({});
+  await List.deleteMany({});
 
   // Create a new list to save our tasks to
   const newList = new List({ name: 'test list' });
