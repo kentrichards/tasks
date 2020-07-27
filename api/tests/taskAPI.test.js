@@ -139,5 +139,7 @@ describe('deleting tasks', () => {
   });
 });
 
+// TODO: Add tests for updating a task
+
 // Clean-up when all tests have finished running
 afterAll(() => mongoose.connection.close());
