@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const wrapAsync = require('../middleware/wrapAsync');
 const Task = require('../models/task');
 

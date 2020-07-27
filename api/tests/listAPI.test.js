@@ -11,7 +11,7 @@ beforeEach(async () => {
   // Wipe the database
   await List.deleteMany({});
 
-  // Repopulate the database using initialLists
+  // Re-populate the database using initialLists
   const promises = [];
   helper.initialLists.forEach((list) => promises.push(new List(list).save()));
 
