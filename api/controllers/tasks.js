@@ -1,22 +1,31 @@
 const wrapAsync = require('../middleware/wrapAsync');
 const Task = require('../models/task');
+const List = require('../models/list');
 
-const createTask = wrapAsync(async (request, response) => {
+const createTask = wrapAsync(async (request, response, next) => {
   const { text, important, listId } = request.body;
 
-  // TODO: Need to check that the listId is currently in use
+  // Ensure the list the task is being created on exists
+  const listExists = await List.exists({ _id: listId });
 
-  // 'date' and 'completed' will be given default values
-  // If 'important' is undefined, it will default to false
-  const newTask = new Task({
-    text,
-    important,
-    listId,
-  });
-  const result = await newTask.save();
+  if (listExists) {
+    // 'date' and 'completed' will be given default values
+    // If 'important' is undefined, it will default to false
+    const newTask = new Task({
+      text,
+      important,
+      listId,
+    });
+    const result = await newTask.save();
 
-  // Returns '201 Created' on success
-  response.status(201).json(result);
+    // Returns '201 Created' on success
+    response.status(201).json(result);
+  } else {
+    next({
+      message: `there is no list with id ${listId}`,
+      statusCode: 400,
+    });
+  }
 });
 
 const fetchTask = wrapAsync(async (request, response, next) => {
