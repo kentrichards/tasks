@@ -110,5 +110,34 @@ describe('fetching one task', () => {
   });
 });
 
+describe('deleting tasks', () => {
+  test('a task can be deleted', async () => {
+    const tasksAtStart = await helper.getTasks();
+    const taskToDelete = tasksAtStart[0];
+
+    // Server should return '204 No Content'
+    await api.delete(`/api/tasks/${taskToDelete.id}`).expect(204);
+
+    // Verify the database has one less task
+    const tasksAtEnd = await helper.getTasks();
+    expect(tasksAtEnd).toHaveLength(helper.initialTasks.length - 1);
+
+    // Verify the deleted task's text has been removed
+    const texts = tasksAtEnd.map((t) => t.text);
+    expect(texts).not.toContain(taskToDelete.text);
+  });
+
+  test("deleting task with non-existing id doesn't do anything", async () => {
+    const nonExistingId = helper.nonExistingId();
+
+    // Server should still return '204 No Content' even if nothing happens
+    await api.delete(`/api/tasks/${nonExistingId}`).expect(204);
+
+    // No tasks should have been harmed in the making of this request
+    const tasksAtEnd = await helper.getTasks();
+    expect(tasksAtEnd).toHaveLength(helper.initialTasks.length);
+  });
+});
+
 // Clean-up when all tests have finished running
 afterAll(() => mongoose.connection.close());

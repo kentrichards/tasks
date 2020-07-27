@@ -116,7 +116,7 @@ describe('deleting lists', () => {
     const listsAtEnd = await helper.getLists();
     expect(listsAtEnd).toHaveLength(helper.initialLists.length - 1);
 
-    // Verify we deleted list's name has been removed
+    // Verify the deleted list's name has been removed
     const names = listsAtEnd.map((l) => l.name);
     expect(names).not.toContain(listToDelete.name);
   });
