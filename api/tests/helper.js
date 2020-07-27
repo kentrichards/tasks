@@ -16,22 +16,16 @@ const initialTasks = [
     text: 'Catch-22',
     completed: true,
     important: false,
-    // temporary
-    listId: '5f1778e269547bd56f1e85f6',
   },
   {
     text: 'Outliers',
     completed: false,
     important: false,
-    // temporary
-    listId: '5f1778e269547bd56f1e85f6',
   },
   {
     text: 'Whole grain bagels',
     completed: false,
     important: false,
-    // temporary
-    listId: '5f1778e269547bd56f1e85f6',
   },
 ];
 

@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app');
-const Task = require('../models/task');
 const helper = require('./helper');
+const Task = require('../models/task');
+const List = require('../models/list');
 
 const api = supertest(app);
 
@@ -11,9 +12,20 @@ beforeEach(async () => {
   // Wipe the database
   await Task.deleteMany({});
 
+  // Create a new list to save our tasks to
+  const newList = new List({ name: 'test list' });
+  const result = await newList.save();
+
   // Re-populate the database using initialTasks
   const promises = [];
-  helper.initialTasks.forEach((task) => promises.push(new Task(task).save()));
+  helper.initialTasks.forEach((task) => {
+    const newTask = new Task({
+      ...task,
+      listId: result.id,
+    });
+
+    promises.push(newTask.save());
+  });
 
   await Promise.all(promises);
 });
@@ -44,10 +56,12 @@ describe('fetching all tasks', () => {
 
 describe('adding new tasks', () => {
   test('a valid task can be added', async () => {
+    const list = await List.findOne();
+
     const newTask = {
       text: 'what i want to do today',
       important: true,
-      listId: helper.initialTasks[0].listId,
+      listId: list.id,
     };
 
     // Add new task to the database and verify it worked
