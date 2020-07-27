@@ -1,4 +1,4 @@
-const objectIdIsValid = require('../utils/objectIdIsValid');
+const mongoose = require('mongoose');
 const wrapAsync = require('../middleware/wrapAsync');
 const Task = require('../models/task');
 
@@ -8,7 +8,7 @@ const createTask = wrapAsync(async (request, response, next) => {
   // TODO: Need to also check that the ObjectId is currently in use
   // This might not be needed? Schema may handle all rejections anyway
   // TODO: Test with 12 character ObjectId
-  if (!objectIdIsValid(listId)) {
+  if (!mongoose.Types.ObjectId.isValid(listId)) {
     next({
       message: `${listId} is not a valid ObjectId`,
       statusCode: 400,
