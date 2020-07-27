@@ -1,5 +1,6 @@
 const wrapAsync = require('../middleware/wrapAsync');
 const List = require('../models/list');
+const Task = require('../models/task');
 
 const createList = wrapAsync(async (request, response) => {
   const newList = new List({ name: request.body.name });
@@ -29,7 +30,9 @@ const fetchLists = wrapAsync(async (_request, response) => {
 });
 
 const deleteList = wrapAsync(async (request, response) => {
+  // Remove the list and all of the tasks on it
   await List.findByIdAndRemove(request.params.id);
+  await Task.deleteMany({ listId: request.params.id });
 
   // Return '204 No Content' in all cases
   response.status(204).end();
