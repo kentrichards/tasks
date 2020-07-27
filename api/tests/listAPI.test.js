@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app');
-const List = require('../models/list');
 const helper = require('./helper');
+const List = require('../models/list');
+const Task = require('../models/task');
 
 const api = supertest(app);
 
@@ -10,12 +11,19 @@ const api = supertest(app);
 beforeEach(async () => {
   // Wipe the database
   await List.deleteMany({});
+  await Task.deleteMany({});
 
   // Re-populate the database using initialLists
   const promises = [];
   helper.initialLists.forEach((list) => promises.push(new List(list).save()));
 
   await Promise.all(promises);
+
+  // Add a task to the first list
+  const list = await List.findOne({ name: helper.initialLists[0].name });
+
+  const newTask = new Task({ text: 'test task', listId: list.id });
+  await newTask.save();
 });
 
 describe('fetching all lists', () => {
@@ -130,6 +138,20 @@ describe('deleting lists', () => {
     // No lists should have been harmed in the making of this request
     const listsAtEnd = await helper.getLists();
     expect(listsAtEnd).toHaveLength(helper.initialLists.length);
+  });
+
+  test('deleting a list deletes its tasks', async () => {
+    const listWithTask = await List.findOne({ name: helper.initialLists[0].name });
+
+    // There should be tasks in the database initially
+    const tasksAtStart = await helper.getTasks();
+    expect(tasksAtStart).toHaveLength(1);
+
+    await api.delete(`/api/lists/${listWithTask.id}`);
+
+    // They should be gone after deleting the list
+    const tasksAtEnd = await helper.getTasks();
+    expect(tasksAtEnd).toHaveLength(0);
   });
 });
 
