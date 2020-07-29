@@ -21,7 +21,7 @@ const taskSchema = new mongoose.Schema({
     default: false,
   },
   listId: {
-    type: mongoose.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
 });
