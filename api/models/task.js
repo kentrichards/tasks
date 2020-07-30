@@ -22,6 +22,7 @@ const taskSchema = new mongoose.Schema({
   },
   list: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: 'List',
     required: true,
   },
 });
@@ -30,7 +31,6 @@ const taskSchema = new mongoose.Schema({
 // Removes document properties that aren't relevant to the client (versioning)
 taskSchema.set('toJSON', {
   /* eslint-disable no-param-reassign */
-  /* eslint-disable no-underscore-dangle */
   transform: (_document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;

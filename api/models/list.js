@@ -12,13 +12,18 @@ const listSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  tasks: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Task',
+    },
+  ],
 });
 
 // Converts ObjectId to a string to avoid issues on the frontend
 // Removes document properties that aren't relevant to the client (versioning)
 listSchema.set('toJSON', {
   /* eslint-disable no-param-reassign */
-  /* eslint-disable no-underscore-dangle */
   transform: (_document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
