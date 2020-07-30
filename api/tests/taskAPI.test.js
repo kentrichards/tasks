@@ -31,8 +31,8 @@ beforeEach(async () => {
   const createdTasks = await Promise.all(promises);
 
   // Add our new tasks ids to the list we created earlier
-  const taskIds = createdTasks.map((task) => task._id);
-  await List.findByIdAndUpdate(createdList._id, { $push: { tasks: taskIds } });
+  const taskIds = createdTasks.map((task) => task.id);
+  await List.findByIdAndUpdate(createdList.id, { $push: { tasks: taskIds } });
 });
 
 describe('fetching all tasks', () => {
@@ -185,7 +185,7 @@ describe('deleting tasks', () => {
     expect(tasksAtEnd).toHaveLength(helper.initialTasks.length - 1);
 
     // Verify the task's id was removed from the list
-    const listAtEnd = await List.findById(listAtStart._id);
+    const listAtEnd = await List.findById(listAtStart.id);
 
     expect(listAtEnd.tasks).not.toContain(taskToDelete);
     expect(listAtEnd.tasks).toHaveLength(listAtStart.tasks.length - 1);
