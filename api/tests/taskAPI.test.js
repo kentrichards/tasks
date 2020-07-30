@@ -14,21 +14,25 @@ beforeEach(async () => {
   await List.deleteMany({});
 
   // Create a new list to save our tasks to
-  const newList = new List({ name: 'test list' });
-  const result = await newList.save();
+  const listObject = new List({ name: 'test list' });
+  const createdList = await listObject.save();
 
-  // Re-populate the database using initialTasks
+  // Add tasks to the database with initialTasks and our new list's id
   const promises = [];
   helper.initialTasks.forEach((task) => {
     const newTask = new Task({
       ...task,
-      list: result.id,
+      list: createdList.id,
     });
 
     promises.push(newTask.save());
   });
 
-  await Promise.all(promises);
+  const createdTasks = await Promise.all(promises);
+
+  // Add our new tasks ids to the list we created earlier
+  const taskIds = createdTasks.map((task) => task._id);
+  await List.findByIdAndUpdate(createdList._id, { $push: { tasks: taskIds } });
 });
 
 describe('fetching all tasks', () => {
@@ -167,6 +171,24 @@ describe('deleting tasks', () => {
     // No tasks should have been harmed in the making of this request
     const tasksAtEnd = await helper.getTasks();
     expect(tasksAtEnd).toHaveLength(helper.initialTasks.length);
+  });
+
+  test("deleting a task removes it from it's parent list", async () => {
+    // Get a random task from the parent list
+    const listAtStart = await List.findOne();
+    const taskToDelete = listAtStart.tasks[0];
+
+    await api.delete(`/api/tasks/${taskToDelete}`).expect(204);
+
+    // Verify the task was deleted
+    const tasksAtEnd = await helper.getTasks();
+    expect(tasksAtEnd).toHaveLength(helper.initialTasks.length - 1);
+
+    // Verify the task's id was removed from the list
+    const listAtEnd = await List.findById(listAtStart._id);
+
+    expect(listAtEnd.tasks).not.toContain(taskToDelete);
+    expect(listAtEnd.tasks).toHaveLength(listAtStart.tasks.length - 1);
   });
 });
 
