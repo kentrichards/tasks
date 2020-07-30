@@ -11,7 +11,7 @@ const createList = wrapAsync(async (request, response) => {
 });
 
 const fetchList = wrapAsync(async (request, response, next) => {
-  const list = await List.findById(request.params.id);
+  const list = await List.findById(request.params.id).populate('tasks', { list: 0 });
 
   if (list) {
     response.json(list);
@@ -24,7 +24,7 @@ const fetchList = wrapAsync(async (request, response, next) => {
 });
 
 const fetchLists = wrapAsync(async (_request, response) => {
-  const lists = await List.find({});
+  const lists = await List.find({}).populate('tasks', { list: 0 });
 
   response.json(lists);
 });
