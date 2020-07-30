@@ -32,7 +32,7 @@ const fetchLists = wrapAsync(async (_request, response) => {
 const deleteList = wrapAsync(async (request, response) => {
   // Remove the list and all of the tasks on it
   await List.findByIdAndRemove(request.params.id);
-  await Task.deleteMany({ listId: request.params.id });
+  await Task.deleteMany({ list: request.params.id });
 
   // Return '204 No Content' in all cases
   response.status(204).end();

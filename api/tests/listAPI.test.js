@@ -15,14 +15,14 @@ beforeEach(async () => {
 
   // Re-populate the database using initialLists
   const promises = [];
-  helper.initialLists.forEach((list) => promises.push(new List(list).save()));
+  helper.initialLists.forEach((l) => promises.push(new List(l).save()));
 
   await Promise.all(promises);
 
   // Add a task to the first list
-  const list = await List.findOne({ name: helper.initialLists[0].name });
+  const listObject = await List.findOne({ name: helper.initialLists[0].name });
 
-  const newTask = new Task({ text: 'test task', listId: list.id });
+  const newTask = new Task({ text: 'test task', list: listObject.id });
   await newTask.save();
 });
 

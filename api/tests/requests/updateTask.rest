@@ -5,5 +5,5 @@ Content-Type: application/json
     "text": "why is this broken",
     "completed": false,
     "important": true,
-    "listId": "5f1778e269547bd56f1e85f6"
+    "list": "5f1778e269547bd56f1e85f6"
 }

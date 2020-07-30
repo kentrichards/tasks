@@ -22,7 +22,7 @@ beforeEach(async () => {
   helper.initialTasks.forEach((task) => {
     const newTask = new Task({
       ...task,
-      listId: result.id,
+      list: result.id,
     });
 
     promises.push(newTask.save());
@@ -57,12 +57,12 @@ describe('fetching all tasks', () => {
 
 describe('adding new tasks', () => {
   test('a valid task can be added', async () => {
-    const list = await List.findOne();
+    const listObject = await List.findOne();
 
     const newTask = {
       text: 'what i want to do today',
       important: true,
-      listId: list.id,
+      list: listObject.id,
     };
 
     // Add new task to the database and verify it worked
@@ -93,19 +93,19 @@ describe('adding new tasks', () => {
   });
 
   test("cannot add task to list that doesn't exist", async () => {
-    const taskWithNonExistingListId = {
+    const taskWithNonExistingList = {
       text: 'buy a puppy',
-      listId: helper.nonExistingId(),
+      list: helper.nonExistingId(),
     };
 
-    await api.post('/api/tasks').send(taskWithNonExistingListId).expect(400);
+    await api.post('/api/tasks').send(taskWithNonExistingList).expect(400);
 
     // Database should not have added our task
     const tasksAtEnd = await helper.getTasks();
     expect(tasksAtEnd).toHaveLength(helper.initialTasks.length);
 
     const texts = tasksAtEnd.map((t) => t.text);
-    expect(texts).not.toContain(taskWithNonExistingListId.text);
+    expect(texts).not.toContain(taskWithNonExistingList.text);
   });
 });
 
@@ -123,7 +123,7 @@ describe('fetching one task', () => {
     expect(resultTask.body.id).toEqual(taskToView.id);
     expect(resultTask.body.text).toEqual(taskToView.text);
     // https://github.com/facebook/jest/issues/8475#issuecomment-537830532
-    expect(JSON.stringify(resultTask.body.listId)).toEqual(JSON.stringify(taskToView.listId));
+    expect(JSON.stringify(resultTask.body.list)).toEqual(JSON.stringify(taskToView.list));
   });
 
   test('fetching a task with a non-existing id returns an error', async () => {

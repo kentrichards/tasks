@@ -4,5 +4,5 @@ Content-Type: application/json
 {
     "text": "add more tests",
     "important": true,
-    "listId": "5f1778e269547bd56f1e85f6"
+    "list": "5f1f095d3995c13f6933afb6"
 }

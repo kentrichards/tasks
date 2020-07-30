@@ -3,10 +3,10 @@ const Task = require('../models/task');
 const List = require('../models/list');
 
 const createTask = wrapAsync(async (request, response, next) => {
-  const { text, important, listId } = request.body;
+  const { text, important, list } = request.body;
 
   // Ensure the list the task is being created on exists
-  const listExists = await List.exists({ _id: listId });
+  const listExists = await List.exists({ _id: list });
 
   if (listExists) {
     // 'date' and 'completed' will be given default values
@@ -14,7 +14,7 @@ const createTask = wrapAsync(async (request, response, next) => {
     const newTask = new Task({
       text,
       important,
-      listId,
+      list,
     });
     const result = await newTask.save();
 
@@ -22,7 +22,7 @@ const createTask = wrapAsync(async (request, response, next) => {
     response.status(201).json(result);
   } else {
     next({
-      message: `there is no list with id ${listId}`,
+      message: `there is no list with id ${list}`,
       statusCode: 400,
     });
   }
