@@ -50,8 +50,19 @@ const fetchTasks = wrapAsync(async (_request, response) => {
   response.json(tasks);
 });
 
-const deleteTask = wrapAsync(async (request, response) => {
-  await Task.findByIdAndRemove(request.params.id);
+const deleteTask = wrapAsync(async (request, response, next) => {
+  const removedTask = await Task.findByIdAndRemove(request.params.id);
+
+  if (!removedTask) {
+    next({
+      message: `cannot find task with id ${request.params.id} to delete`,
+      statusCode: 404,
+    });
+  }
+
+  // Remove the task from the List.tasks array it was part of
+  // TODO: Convert to schema middleware (taskSchema.pre('remove', ...))
+  await List.findByIdAndUpdate(removedTask.list, { $pull: { tasks: removedTask._id } });
 
   // Return '204 No Content' in all cases
   response.status(204).end();

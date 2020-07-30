@@ -161,8 +161,8 @@ describe('deleting tasks', () => {
   test("deleting task with non-existing id doesn't do anything", async () => {
     const nonExistingId = helper.nonExistingId();
 
-    // Server should still return '204 No Content' even if nothing happens
-    await api.delete(`/api/tasks/${nonExistingId}`).expect(204);
+    // Server should return '404 Not Found'
+    await api.delete(`/api/tasks/${nonExistingId}`).expect(404);
 
     // No tasks should have been harmed in the making of this request
     const tasksAtEnd = await helper.getTasks();

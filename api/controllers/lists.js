@@ -31,6 +31,7 @@ const fetchLists = wrapAsync(async (_request, response) => {
 
 const deleteList = wrapAsync(async (request, response) => {
   // Remove the list and all of the tasks on it
+  // TODO: Convert to schema middleware (listSchema.pre('remove', ...))
   await List.findByIdAndRemove(request.params.id);
   await Task.deleteMany({ list: request.params.id });
 
