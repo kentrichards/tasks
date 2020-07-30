@@ -1,6 +1,7 @@
 const cors = require('cors');
 const express = require('express');
 const connectToDb = require('./utils/db');
+const userRouter = require('./routes/users');
 const listRouter = require('./routes/lists');
 const taskRouter = require('./routes/tasks');
 const errorHandler = require('./middleware/errorHandler');
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(requestLogger);
 
 // Routers
+app.use('/api/users', userRouter);
 app.use('/api/lists', listRouter);
 app.use('/api/tasks', taskRouter);
 
