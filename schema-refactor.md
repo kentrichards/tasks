@@ -24,3 +24,4 @@
 - Create "delete middleware" that fires every time a document is deleted, that cleans up it's associated documents (e.g., deleting a User deletes all of their Lists and Tasks, too. Similar to stored procedures in SQL)
   - https://stackoverflow.com/questions/32674280/removing-one-one-and-one-many-references-mongoose
   - https://mongoosejs.com/docs/middleware.html
+- Extract methods from controllers to schema where relevant (https://thinkster.io/tutorials/node-json-api/creating-the-user-model)
