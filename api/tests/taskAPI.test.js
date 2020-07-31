@@ -2,27 +2,37 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app');
 const helper = require('./helper');
+const User = require('../models/user');
 const Task = require('../models/task');
 const List = require('../models/list');
+const { use } = require('../routes/users');
 
 const api = supertest(app);
 
 // Initialize the test database before each test is run
 beforeEach(async () => {
   // Wipe the database
-  await Task.deleteMany({});
+  await User.deleteMany({});
   await List.deleteMany({});
+  await Task.deleteMany({});
+
+  // Create a user for our list to belong to
+  const user = new User({
+    username: 'mike',
+    passwordHash: '$2b$10$CUMRgmbATfxC2xWInbZ8pOFTDrurjBtOq4s09H6sbqTzZt4ign9Cu',
+  });
+  await user.save();
 
   // Create a new list to save our tasks to
-  const listObject = new List({ name: 'test list' });
-  const createdList = await listObject.save();
+  const list = new List({ name: 'test list', user: user._id });
+  await list.save();
 
   // Add tasks to the database with initialTasks and our new list's id
   const promises = [];
   helper.initialTasks.forEach((task) => {
     const newTask = new Task({
       ...task,
-      list: createdList.id,
+      list: list._id,
     });
 
     promises.push(newTask.save());

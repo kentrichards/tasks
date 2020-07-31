@@ -11,11 +11,16 @@ const api = supertest(app);
 // Initialize the test database before each test is run
 beforeEach(async () => {
   // Wipe the database
+  await User.deleteMany({});
   await List.deleteMany({});
   await Task.deleteMany({});
 
   // Create a user for all the lists to belong to
-  const user = await api.post('/api/users').send({ username: 'mike', password: 'bulls123' });
+  const user = new User({
+    username: 'mike',
+    passwordHash: '$2b$10$CUMRgmbATfxC2xWInbZ8pOFTDrurjBtOq4s09H6sbqTzZt4ign9Cu',
+  });
+  await user.save();
 
   // Re-populate the database using initialLists and user id
   const promises = [];
@@ -27,9 +32,9 @@ beforeEach(async () => {
   await Promise.all(promises);
 
   // Add a task to the first list
-  const listObject = await List.findOne({ name: helper.initialLists[0].name });
+  const list = await List.findOne({ name: helper.initialLists[0].name });
 
-  const newTask = new Task({ text: 'test task', list: listObject.id });
+  const newTask = new Task({ text: 'test task', list: list._id });
   await newTask.save();
 });
 

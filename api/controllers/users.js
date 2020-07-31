@@ -25,9 +25,9 @@ const createUser = wrapAsync(async (request, response, next) => {
 
   // Don't save the password to the database, just the hash
   const user = new User({ username, passwordHash });
-  const savedUser = await user.save();
+  const result = await user.save();
 
-  response.json(savedUser);
+  response.json(result);
 });
 
 const fetchUser = wrapAsync(async (request, response) => {

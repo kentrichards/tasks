@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User = require('./user');
 
 // Show the queries being sent to the database
 mongoose.set('debug', true);
@@ -22,6 +23,27 @@ const listSchema = new mongoose.Schema({
       ref: 'Task',
     },
   ],
+});
+
+listSchema.pre('save', async function (next) {
+  const userExists = await User.exists({ _id: this.user });
+
+  if (!userExists) {
+    next({
+      message: `there is no user with id ${this.user}`,
+      statusCode: 400,
+    });
+
+    return;
+  }
+
+  next();
+});
+
+listSchema.post('save', async function (document, next) {
+  // The list to its parent user after it is saved
+  await User.findByIdAndUpdate(document.user, { $push: { lists: document._id } });
+  next();
 });
 
 // Converts ObjectId to a string to avoid issues on the frontend
