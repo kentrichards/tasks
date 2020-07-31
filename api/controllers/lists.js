@@ -31,17 +31,22 @@ const fetchLists = wrapAsync(async (_request, response) => {
   response.json(lists);
 });
 
-const deleteList = wrapAsync(async (request, response) => {
-  // Remove the list and all of the tasks on it
-  // TODO: Convert to schema middleware (listSchema.pre('remove', ...))
-  const deletedList = await List.findByIdAndRemove(request.params.id);
+const deleteList = wrapAsync(async (request, response, next) => {
+  const listToRemove = await List.findById(request.params.id);
 
-  if (deletedList) {
-    await Task.deleteMany({ list: deletedList._id });
+  if (!listToRemove) {
+    next({
+      message: `cannot find list with id ${request.params.id} to delete`,
+      statusCode: 404,
+    });
 
-    // Remove the list's id from the User.lists array it was in
-    await User.findByIdAndUpdate(deletedList.user, { $pull: { lists: deletedList._id } });
+    return;
   }
+
+  // Delete the list and all of its tasks
+  // The list is removed from the User.lists array automatically in listSchema
+  await listToRemove.remove();
+  await Task.deleteMany({ list: listToRemove._id });
 
   // Return '204 No Content' in all cases
   response.status(204).end();

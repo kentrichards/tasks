@@ -39,6 +39,11 @@ listSchema.pre('save', async function (next) {
   }
 });
 
+listSchema.pre('remove', async function () {
+  // Remove the list's id from the User.lists array it was in
+  await User.findByIdAndUpdate(this.user, { $pull: { lists: this._id } });
+});
+
 // Converts ObjectId to a string to avoid issues on the frontend
 // Removes document properties that aren't relevant to the client (versioning)
 listSchema.set('toJSON', {
