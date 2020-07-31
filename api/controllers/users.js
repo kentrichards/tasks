@@ -44,22 +44,4 @@ const fetchUser = wrapAsync(async (request, response) => {
   response.json(userWithData);
 });
 
-const deleteUser = wrapAsync(async (request, response, next) => {
-  const userToRemove = await User.findById(request.params.id);
-
-  if (!userToRemove) {
-    next({
-      message: `cannot find user with id ${request.params.id} to delete`,
-      statusCode: 404,
-    });
-
-    return;
-  }
-
-  await userToRemove.remove();
-
-  /// Return '204 No Content'
-  response.status(204).end();
-});
-
-module.exports = { createUser, fetchUser, deleteUser };
+module.exports = { createUser, fetchUser };

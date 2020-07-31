@@ -1,5 +1,4 @@
 const wrapAsync = require('../middleware/wrapAsync');
-const User = require('../models/user');
 const List = require('../models/list');
 const Task = require('../models/task');
 
