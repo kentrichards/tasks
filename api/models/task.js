@@ -43,10 +43,9 @@ taskSchema.pre('save', async function (next) {
   next();
 });
 
-taskSchema.post('save', async function (document, next) {
+taskSchema.post('save', async function (document) {
   // Add the task to its parent list after it is saved
   await List.findByIdAndUpdate(document.list, { $push: { tasks: document._id } });
-  next();
 });
 
 // Converts ObjectId to a string to avoid issues on the frontend
