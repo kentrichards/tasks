@@ -1,6 +1,5 @@
 const wrapAsync = require('../middleware/wrapAsync');
 const Task = require('../models/task');
-const List = require('../models/list');
 
 const createTask = wrapAsync(async (request, response) => {
   const { body } = request;
@@ -38,18 +37,18 @@ const fetchTasks = wrapAsync(async (_request, response) => {
 });
 
 const deleteTask = wrapAsync(async (request, response, next) => {
-  const removedTask = await Task.findByIdAndRemove(request.params.id);
+  const taskToRemove = await Task.findById(request.params.id);
 
-  if (!removedTask) {
+  if (!taskToRemove) {
     next({
       message: `cannot find task with id ${request.params.id} to delete`,
       statusCode: 404,
     });
+
+    return;
   }
 
-  // Remove the task from the List.tasks array it was part of
-  // TODO: Convert to schema middleware (taskSchema.pre('remove', ...))
-  await List.findByIdAndUpdate(removedTask.list, { $pull: { tasks: removedTask._id } });
+  await taskToRemove.remove();
 
   // Return '204 No Content' in all cases
   response.status(204).end();

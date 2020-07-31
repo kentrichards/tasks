@@ -37,9 +37,14 @@ taskSchema.pre('save', async function (next) {
   } else {
     next({
       message: `there is no list with id ${this.list}`,
-      statusCode: 400,
+      statusCode: 404,
     });
   }
+});
+
+taskSchema.pre('remove', async function () {
+  // Remove the task from the List.tasks array it was part of
+  await List.findByIdAndUpdate(this.list, { $pull: { tasks: this._id } });
 });
 
 // Converts ObjectId to a string to avoid issues on the frontend

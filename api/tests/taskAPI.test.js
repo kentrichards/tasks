@@ -168,7 +168,7 @@ describe('deleting tasks', () => {
     expect(texts).not.toContain(taskToDelete.text);
   });
 
-  test("deleting task with non-existing id doesn't do anything", async () => {
+  test('deleting task with non-existing id returns an error', async () => {
     const nonExistingId = helper.nonExistingId();
 
     // Server should return '404 Not Found'
