@@ -28,11 +28,7 @@ beforeEach(async () => {
     promises.push(newTask.save());
   });
 
-  const createdTasks = await Promise.all(promises);
-
-  // Add our new tasks ids to the list we created earlier
-  const taskIds = createdTasks.map((task) => task.id);
-  await List.findByIdAndUpdate(createdList.id, { $push: { tasks: taskIds } });
+  await Promise.all(promises);
 });
 
 describe('fetching all tasks', () => {
