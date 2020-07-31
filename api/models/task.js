@@ -34,7 +34,6 @@ taskSchema.pre('save', async function (next) {
   if (listExists) {
     // Add the task to its parent list after it is saved
     await List.findByIdAndUpdate(this.list, { $push: { tasks: this._id } });
-    next();
   } else {
     next({
       message: `there is no list with id ${this.list}`,

@@ -31,7 +31,6 @@ listSchema.pre('save', async function (next) {
   if (userExists) {
     // Add the list to its parent user after it is saved
     await User.findByIdAndUpdate(this.user, { $push: { lists: this._id } });
-    next();
   } else {
     next({
       message: `there is no user with id ${this.user}`,
