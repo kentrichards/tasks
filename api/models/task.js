@@ -31,21 +31,16 @@ const taskSchema = new mongoose.Schema({
 taskSchema.pre('save', async function (next) {
   const listExists = await List.exists({ _id: this.list });
 
-  if (!listExists) {
+  if (listExists) {
+    // Add the task to its parent list after it is saved
+    await List.findByIdAndUpdate(this.list, { $push: { tasks: this._id } });
+    next();
+  } else {
     next({
       message: `there is no list with id ${this.list}`,
       statusCode: 400,
     });
-
-    return;
   }
-
-  next();
-});
-
-taskSchema.post('save', async function (document) {
-  // Add the task to its parent list after it is saved
-  await List.findByIdAndUpdate(document.list, { $push: { tasks: document._id } });
 });
 
 // Converts ObjectId to a string to avoid issues on the frontend

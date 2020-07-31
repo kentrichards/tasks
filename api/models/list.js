@@ -28,21 +28,16 @@ const listSchema = new mongoose.Schema({
 listSchema.pre('save', async function (next) {
   const userExists = await User.exists({ _id: this.user });
 
-  if (!userExists) {
+  if (userExists) {
+    // Add the list to its parent user after it is saved
+    await User.findByIdAndUpdate(this.user, { $push: { lists: this._id } });
+    next();
+  } else {
     next({
       message: `there is no user with id ${this.user}`,
       statusCode: 400,
     });
-
-    return;
   }
-
-  next();
-});
-
-listSchema.post('save', async function (document) {
-  // The list to its parent user after it is saved
-  await User.findByIdAndUpdate(document.user, { $push: { lists: document._id } });
 });
 
 // Converts ObjectId to a string to avoid issues on the frontend
