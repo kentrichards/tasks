@@ -2,15 +2,7 @@ const wrapAsync = require('../middleware/wrapAsync');
 const Task = require('../models/task');
 
 const createTask = wrapAsync(async (request, response) => {
-  const { body } = request;
-
-  // 'date' and 'completed' will be given default values
-  // If 'important' is undefined, it will default to false
-  const newTask = new Task({
-    text: body.text,
-    important: body.important || false,
-    list: body.list,
-  });
+  const newTask = new Task(request.body);
   const result = await newTask.save();
 
   // Returns '201 Created' on success

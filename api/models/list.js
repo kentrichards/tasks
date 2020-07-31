@@ -34,7 +34,7 @@ listSchema.pre('save', async function (next) {
   } else {
     next({
       message: `there is no user with id ${this.user}`,
-      statusCode: 400,
+      statusCode: 404,
     });
   }
 });

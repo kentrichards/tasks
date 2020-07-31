@@ -108,7 +108,7 @@ describe('adding new tasks', () => {
       list: helper.nonExistingId(),
     };
 
-    await api.post('/api/tasks').send(taskWithNonExistingList).expect(400);
+    await api.post('/api/tasks').send(taskWithNonExistingList).expect(404);
 
     // Database should not have added our task
     const tasksAtEnd = await helper.getTasks();

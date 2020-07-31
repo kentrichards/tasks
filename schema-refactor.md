@@ -26,3 +26,4 @@
   - https://stackoverflow.com/questions/32674280/removing-one-one-and-one-many-references-mongoose
   - https://mongoosejs.com/docs/middleware.html
 - Extract methods from controllers to schema where relevant (https://thinkster.io/tutorials/node-json-api/creating-the-user-model)
+- Circular imports in schema (e.g., `pre` and `post` methods) cause issues (like `List.exists() is not a function`)
