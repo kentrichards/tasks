@@ -16,10 +16,11 @@
 
 ### New feature
 
-- Create the User schema, with fields for username, email, passwordHash, and lists (don't worry too much about validation and require fields for now)
+- ~~Create the User schema, with fields for username, email, passwordHash, and lists (don't worry too much about validation and require fields for now)~~
 - Create CRUD routes/controllers for the User API
 - Add basic tests for User API
 - Add tests for using nested populate calls to get all of a User's data in one go
+- Add tests to ensure deleting a user removes its lists and those lists' tasks
 - Token validation, etc ...
 - Create "delete middleware" that fires every time a document is deleted, that cleans up it's associated documents (e.g., deleting a User deletes all of their Lists and Tasks, too. Similar to stored procedures in SQL)
   - https://stackoverflow.com/questions/32674280/removing-one-one-and-one-many-references-mongoose

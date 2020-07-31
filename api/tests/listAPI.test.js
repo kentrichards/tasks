@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app');
 const helper = require('./helper');
+const User = require('../models/user');
 const List = require('../models/list');
 const Task = require('../models/task');
 
@@ -13,9 +14,15 @@ beforeEach(async () => {
   await List.deleteMany({});
   await Task.deleteMany({});
 
-  // Re-populate the database using initialLists
+  // Create a user for all the lists to belong to
+  const user = await api.post('/api/users').send({ username: 'mike', password: 'bulls123' });
+
+  // Re-populate the database using initialLists and user id
   const promises = [];
-  helper.initialLists.forEach((l) => promises.push(new List(l).save()));
+  helper.initialLists.forEach((list) => {
+    const newList = new List({ ...list, user: user._id });
+    promises.push(newList.save());
+  });
 
   await Promise.all(promises);
 
@@ -52,7 +59,10 @@ describe('fetching all lists', () => {
 
 describe('adding new lists', () => {
   test('a valid list can be added', async () => {
-    const newList = { name: 'My New List' };
+    // Get the user who all the lists belong to
+    const user = await User.findOne();
+
+    const newList = { name: 'My New List', user: user._id };
 
     // Add new list to the database and verify it worked
     await api
