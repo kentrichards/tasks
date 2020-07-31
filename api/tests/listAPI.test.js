@@ -144,11 +144,11 @@ describe('deleting lists', () => {
     expect(names).not.toContain(listToDelete.name);
   });
 
-  test("deleting list with non-existing id doesn't do anything", async () => {
+  test('deleting list with non-existing id returns an error', async () => {
     const nonExistingId = helper.nonExistingId();
 
-    // Server should still return '204 No Content' even if nothing happens
-    await api.delete(`/api/lists/${nonExistingId}`).expect(204);
+    // Server should return '404 Not Found'
+    await api.delete(`/api/lists/${nonExistingId}`).expect(404);
 
     // No lists should have been harmed in the making of this request
     const listsAtEnd = await helper.getLists();
