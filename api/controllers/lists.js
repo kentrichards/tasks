@@ -3,7 +3,7 @@ const List = require('../models/list');
 const Task = require('../models/task');
 
 const createList = wrapAsync(async (request, response) => {
-  const newList = new List({ name: request.body.name });
+  const newList = new List(request.body);
   const result = await newList.save();
 
   // Returns '201 Created' on success

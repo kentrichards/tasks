@@ -33,6 +33,7 @@ const createUser = wrapAsync(async (request, response, next) => {
 const fetchUser = wrapAsync(async (request, response) => {
   const userWithData = await User.findById(request.params.id).populate({
     path: 'lists',
+    select: { user: 0 },
     populate: {
       path: 'tasks',
       model: 'Task',
