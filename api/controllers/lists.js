@@ -1,13 +1,30 @@
 const wrapAsync = require('../middleware/wrapAsync');
+const User = require('../models/user');
 const List = require('../models/list');
 const Task = require('../models/task');
 
-const createList = wrapAsync(async (request, response) => {
-  const newList = new List(request.body);
-  const result = await newList.save();
+const createList = wrapAsync(async (request, response, next) => {
+  const { body } = request;
 
-  // Returns '201 Created' on success
-  response.status(201).json(result);
+  // Ensure the user who owns the list exists
+  // TODO: Update so a user can only create lists for themselves
+  const user = await User.findById(body.user);
+
+  if (user) {
+    const newList = new List({ name: body.name, user: user._id });
+    const result = await newList.save();
+
+    user.lists = await user.lists.concat(newList._id);
+    await user.save();
+
+    // Returns '201 Created' on success
+    response.status(201).json(result);
+  } else {
+    next({
+      message: `there is no user with id ${body.user}`,
+      statusCode: 400,
+    });
+  }
 });
 
 const fetchList = wrapAsync(async (request, response, next) => {
