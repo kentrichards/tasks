@@ -5,7 +5,6 @@ const helper = require('./helper');
 const User = require('../models/user');
 const Task = require('../models/task');
 const List = require('../models/list');
-const { use } = require('../routes/users');
 
 const api = supertest(app);
 
