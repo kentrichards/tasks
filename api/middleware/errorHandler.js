@@ -5,19 +5,25 @@ const logger = require('../utils/logger');
 const errorHandler = (error, _request, response, _next) => {
   logger.error(error.message);
 
-  let message = error.message || 'Internal server error';
-  let statusCode = error.statusCode || 500;
+  let message;
+  let statusCode;
 
-  // CastError is thrown when Mongoose fails to cast a value (e.g., an id)
-  if (error.name === 'CastError') {
-    message = 'malformed id';
-    statusCode = 400;
-  }
+  switch (error.name) {
+    case 'CastError':
+      // CastError is thrown when Mongoose fails to cast a value (e.g., an id)
+      message = 'malformed id';
+      statusCode = 400;
+      break;
 
-  // Database entry failed to meet the constraints defined by the schema
-  if (error.name === 'ValidationError') {
-    message = 'database entry does not meet schema requirements';
-    statusCode = 400;
+    case 'ValidationError':
+      // Database entry failed to meet the constraints defined by the schema
+      message = error.message || 'database entry does not meet schema requirements';
+      statusCode = 400;
+      break;
+
+    default:
+      message = error.message || 'Internal server error';
+      statusCode = error.statusCode || 500;
   }
 
   response.status(statusCode).json({ error: message });

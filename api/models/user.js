@@ -7,9 +7,12 @@ mongoose.set('debug', true);
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
+    required: true,
     unique: true,
     index: true, // Optimise username for database lookups
     trim: true,
+    minlength: [4, 'Username must be at least 4 characters long'],
+    maxlength: [32, 'Username cannot be longer than 32 characters'],
   },
   passwordHash: String,
   dateCreated: {

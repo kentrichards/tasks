@@ -42,4 +42,7 @@ const getTasks = async () => {
 // Returns a valid id that is not associated with any document
 const nonExistingId = () => mongoose.Types.ObjectId();
 
-module.exports = { initialLists, initialTasks, getLists, getTasks, nonExistingId };
+// Returns a valid password hash, no need to generate one on demand
+const getPasswordHash = () => '$2b$10$CUMRgmbATfxC2xWInbZ8pOFTDrurjBtOq4s09H6sbqTzZt4ign9Cu';
+
+module.exports = { initialLists, initialTasks, getLists, getTasks, nonExistingId, getPasswordHash };

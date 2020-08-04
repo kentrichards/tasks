@@ -5,18 +5,13 @@ const User = require('../models/user');
 const createUser = wrapAsync(async (request, response, next) => {
   const { username, password } = request.body;
 
-  if (!username) {
-    next({
-      message: 'username missing or invalid',
-      statusCode: 400,
-    });
-  }
-
   if (!password || password.length < 8 || password.length > 128) {
     next({
       message: 'password must be between 8 and 128 characters',
       statusCode: 400,
     });
+
+    return;
   }
 
   // Generate password hash
@@ -30,7 +25,7 @@ const createUser = wrapAsync(async (request, response, next) => {
   response.json(result);
 });
 
-const fetchUser = wrapAsync(async (request, response) => {
+const fetchUser = wrapAsync(async (request, response, next) => {
   const userWithData = await User.findById(request.params.id).populate({
     path: 'lists',
     select: { user: 0 },
@@ -40,6 +35,15 @@ const fetchUser = wrapAsync(async (request, response) => {
       select: { list: 0 },
     },
   });
+
+  if (!userWithData) {
+    next({
+      message: `cannot find user with id ${request.params.id}`,
+      statusCode: 404,
+    });
+
+    return;
+  }
 
   response.json(userWithData);
 });
