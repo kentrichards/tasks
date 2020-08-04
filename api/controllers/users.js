@@ -26,16 +26,6 @@ const createUser = wrapAsync(async (request, response, next) => {
 });
 
 const fetchUser = wrapAsync(async (request, response, next) => {
-  // Prevent a user from retrieving another user's data
-  if (request.params.id !== request.user._id.toString()) {
-    next({
-      message: "cannot request another user's information",
-      statusCode: 403,
-    });
-
-    return;
-  }
-
   const userWithData = await User.findById(request.params.id).populate({
     path: 'lists',
     select: { user: 0 },
