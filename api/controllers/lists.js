@@ -32,13 +32,15 @@ const deleteList = wrapAsync(async (request, response, next) => {
   response.status(204).end();
 });
 
-// TODO: Ensure only supplied properties are updated
-// TODO: Ensure 'name' is not set to null or some other non-string value
 const updateList = wrapAsync(async (request, response) => {
-  const list = { name: request.body.name };
+  const changedFields = {};
+
+  if (request.body.name) {
+    changedFields.name = request.body.name;
+  }
 
   // { new: true } tells Mongoose to return the updated list, not the original
-  const result = await List.findByIdAndUpdate(request.params.id, list, { new: true });
+  const result = await List.findByIdAndUpdate(request.params.id, changedFields, { new: true });
 
   response.json(result);
 });

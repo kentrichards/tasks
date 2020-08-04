@@ -116,7 +116,78 @@ describe('deleting lists', () => {
   });
 });
 
-// TODO: Add tests for updating a list
+describe('updating a list', () => {
+  test("a list's name can be changed", async () => {
+    const listToUpdate = await List.findOne();
+    const listUpdates = { name: 'new list name' };
+
+    const response = await api
+      .put(`/api/lists/${listToUpdate._id}`)
+      .send(listUpdates)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.name).toEqual(listUpdates.name);
+    expect(response.body.name).not.toEqual(listToUpdate.name);
+  });
+
+  test('list name cannot be set to empty string', async () => {
+    const listToUpdate = await List.findOne();
+    const emptyUpdate = { name: '' };
+
+    const response = await api
+      .put(`/api/lists/${listToUpdate._id}`)
+      .send(emptyUpdate)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    // List name is not set to an empty string
+    expect(response.body.name).toEqual(listToUpdate.name);
+  });
+
+  test('list name cannot be set to null', async () => {
+    const listToUpdate = await List.findOne();
+    const nullUpdate = { name: null };
+
+    const response = await api
+      .put(`/api/lists/${listToUpdate._id}`)
+      .send(nullUpdate)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    // List name is not set to null
+    expect(response.body.name).toEqual(listToUpdate.name);
+  });
+
+  test('user field cannot be updated', async () => {
+    const listToUpdate = await List.findOne();
+    const listUpdates = { user: helper.nonExistingId() };
+
+    const response = await api
+      .put(`/api/lists/${listToUpdate._id}`)
+      .send(listUpdates)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    // User field should not have changed
+    // https://github.com/facebook/jest/issues/8475#issuecomment-537830532
+    expect(JSON.stringify(response.body.user)).toEqual(JSON.stringify(listToUpdate.user));
+  });
+
+  test('tasks array cannot be updated', async () => {
+    const listToUpdate = await List.findOne();
+    const listUpdates = { tasks: [] };
+
+    const response = await api
+      .put(`/api/lists/${listToUpdate._id}`)
+      .send(listUpdates)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    // Tasks field should not have changed
+    expect(response.body.tasks).not.toHaveLength(listUpdates.tasks.length);
+  });
+});
 
 // Clean-up when all tests have finished running
 afterAll(() => mongoose.connection.close());
