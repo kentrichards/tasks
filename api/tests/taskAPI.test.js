@@ -141,7 +141,101 @@ describe('deleting tasks', () => {
   });
 });
 
-// TODO: Add tests for updating a task
+describe('updating a task', () => {
+  test("a task's name can be changed", async () => {
+    const taskToUpdate = await Task.findOne();
+    const taskUpdates = { text: 'new task text' };
+
+    const response = await api
+      .put(`/api/tasks/${taskToUpdate._id}`)
+      .send(taskUpdates)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.text).toEqual(taskUpdates.text);
+    expect(response.body.text).not.toEqual(taskToUpdate.text);
+  });
+
+  test('important and completed fields can be updated', async () => {
+    const taskToUpdate = await Task.findOne();
+
+    const importantAtStart = taskToUpdate.important;
+    const completedAtStart = taskToUpdate.completed;
+
+    // Flip the 'important' and 'completed' fields
+    const taskUpdates = {
+      important: !importantAtStart,
+      completed: !completedAtStart,
+    };
+
+    const response = await api
+      .put(`/api/tasks/${taskToUpdate._id}`)
+      .send(taskUpdates)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.important).toEqual(!importantAtStart);
+    expect(response.body.completed).toEqual(!completedAtStart);
+  });
+
+  test('list field cannot be updated', async () => {
+    const taskToUpdate = await Task.findOne();
+    const taskUpdates = { list: helper.nonExistingId() };
+
+    const response = await api
+      .put(`/api/tasks/${taskToUpdate._id}`)
+      .send(taskUpdates)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    // Nothing should have changed
+    // https://github.com/facebook/jest/issues/8475#issuecomment-537830532
+    expect(JSON.stringify(response.body.list)).toEqual(JSON.stringify(taskToUpdate.list));
+  });
+
+  test('boolean fields cannot be set to null', async () => {
+    const taskToUpdate = await Task.findOne();
+    const taskUpdates = { important: null, completed: null };
+
+    const response = await api
+      .put(`/api/tasks/${taskToUpdate._id}`)
+      .send(taskUpdates)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    // Nothing should have changed
+    expect(response.body.important).toEqual(taskToUpdate.important);
+    expect(response.body.completed).toEqual(taskToUpdate.completed);
+  });
+
+  test('task text cannot be set to empty string', async () => {
+    const taskToUpdate = await Task.findOne();
+    const emptyUpdate = { text: '' };
+
+    const response = await api
+      .put(`/api/tasks/${taskToUpdate._id}`)
+      .send(emptyUpdate)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    // Task text is not set to an empty string
+    expect(response.body.text).toEqual(taskToUpdate.text);
+  });
+
+  test('task text cannot be set to null', async () => {
+    const taskToUpdate = await Task.findOne();
+    const nullUpdate = { text: null };
+
+    const response = await api
+      .put(`/api/tasks/${taskToUpdate._id}`)
+      .send(nullUpdate)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    // Task text is not set to null
+    expect(response.body.text).toEqual(taskToUpdate.text);
+  });
+});
 
 // Clean-up when all tests have finished running
 afterAll(() => mongoose.connection.close());
