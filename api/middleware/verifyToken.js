@@ -33,7 +33,7 @@ const verifyToken = wrapAsync(async (request, _response, next) => {
     return;
   }
 
-  // Make the user available to controllers by adding it to the request object
+  // Make the current user available to controllers by adding it to the request
   request.user = user;
   next();
 });
