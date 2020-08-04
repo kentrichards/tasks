@@ -4,7 +4,7 @@ const Task = require('../models/task');
 
 const createList = wrapAsync(async (request, response) => {
   // TODO: Update so a user can only create lists for themselves
-  const newList = new List(request.body);
+  const newList = new List({ ...request.body, user: request.user._id });
   const result = await newList.save();
 
   // Returns '201 Created' on success

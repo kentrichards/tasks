@@ -22,7 +22,7 @@ const verifyToken = wrapAsync(async (request, _response, next) => {
     return;
   }
 
-  const user = User.findById(decodedToken.id);
+  const user = await User.findById(decodedToken.id);
 
   if (!user) {
     next({
