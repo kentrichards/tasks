@@ -28,8 +28,25 @@ const deleteTask = wrapAsync(async (request, response, next) => {
 });
 
 const updateTask = wrapAsync(async (request, response) => {
+  const updatedTask = {};
+
+  // Only allow updating of 'text', 'important', and 'completed' fields
+  const { text, important, completed } = request.body;
+
+  if (text) {
+    updatedTask.text = text;
+  }
+
+  if (important !== null && important !== undefined) {
+    updatedTask.important = important;
+  }
+
+  if (completed !== null && completed !== undefined) {
+    updatedTask.completed = completed;
+  }
+
   // { new: true } tells Mongoose to return the updated list, not the original
-  const result = await Task.findByIdAndUpdate(request.params.id, request.body, { new: true });
+  const result = await Task.findByIdAndUpdate(request.params.id, updatedTask, { new: true });
 
   response.json(result);
 });

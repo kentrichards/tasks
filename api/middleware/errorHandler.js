@@ -11,7 +11,7 @@ const errorHandler = (error, _request, response, _next) => {
   switch (error.name) {
     case 'CastError':
       // CastError is thrown when Mongoose fails to cast a value (e.g., an id)
-      message = 'malformed id';
+      message = error.message || 'malformed id';
       statusCode = 400;
       break;
 
