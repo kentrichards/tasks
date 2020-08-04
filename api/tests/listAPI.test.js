@@ -38,30 +38,6 @@ beforeEach(async () => {
   await newTask.save();
 });
 
-describe('fetching all lists', () => {
-  test('lists are returned as json', async () => {
-    await api
-      .get('/api/lists')
-      .expect(200)
-      .expect('Content-Type', /application\/json/);
-  });
-
-  test('all lists are returned', async () => {
-    const response = await api.get('/api/lists');
-    expect(response.body).toHaveLength(helper.initialLists.length);
-  });
-
-  test('list names are saved on upload', async () => {
-    const response = await api.get('/api/lists');
-
-    // Save all of the list names
-    const names = response.body.map((r) => r.name);
-
-    // Check that the list name we are looking for exists
-    expect(names).toContain(helper.initialLists[0].name);
-  });
-});
-
 describe('adding new lists', () => {
   test('a valid list can be added', async () => {
     // Get the user who all the lists belong to
@@ -94,36 +70,6 @@ describe('adding new lists', () => {
     // Database should not have any new lists
     const listsAtEnd = await helper.getLists();
     expect(listsAtEnd).toHaveLength(helper.initialLists.length);
-  });
-});
-
-describe('fetching one list', () => {
-  test('a specific list can be retrieved', async () => {
-    const listsAtStart = await helper.getLists();
-    const listToView = listsAtStart[0];
-
-    const resultList = await api
-      .get(`/api/lists/${listToView.id}`)
-      .expect(200)
-      .expect('Content-Type', /application\/json/);
-
-    // Don't check for full equality because of the date field
-    expect(resultList.body.id).toEqual(listToView.id);
-    expect(resultList.body.name).toEqual(listToView.name);
-  });
-
-  test('fetching a list with a non-existing id returns an error', async () => {
-    const nonExistingId = helper.nonExistingId();
-
-    // Server should return '404 Not Found', because the request was valid
-    await api.get(`/api/lists/${nonExistingId}`).expect(404);
-  });
-
-  test('fetching a list with an invalid id returns an error', async () => {
-    const invalidId = 1;
-
-    // Server should return '400 Bad Request'
-    await api.get(`/api/lists/${invalidId}`).expect(400);
   });
 });
 

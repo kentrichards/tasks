@@ -9,25 +9,6 @@ const createTask = wrapAsync(async (request, response) => {
   response.status(201).json(result);
 });
 
-const fetchTask = wrapAsync(async (request, response, next) => {
-  const task = await Task.findById(request.params.id);
-
-  if (task) {
-    response.json(task);
-  } else {
-    next({
-      message: `no task found with id ${request.params.id}`,
-      statusCode: 404,
-    });
-  }
-});
-
-const fetchTasks = wrapAsync(async (_request, response) => {
-  const tasks = await Task.find({});
-
-  response.json(tasks);
-});
-
 const deleteTask = wrapAsync(async (request, response, next) => {
   const taskToRemove = await Task.findById(request.params.id);
 
@@ -53,4 +34,4 @@ const updateTask = wrapAsync(async (request, response) => {
   response.json(result);
 });
 
-module.exports = { createTask, fetchTask, fetchTasks, deleteTask, updateTask };
+module.exports = { createTask, deleteTask, updateTask };

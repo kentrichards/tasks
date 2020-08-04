@@ -11,25 +11,6 @@ const createList = wrapAsync(async (request, response) => {
   response.status(201).json(result);
 });
 
-const fetchList = wrapAsync(async (request, response, next) => {
-  const list = await List.findById(request.params.id).populate('tasks', { list: 0 });
-
-  if (list) {
-    response.json(list);
-  } else {
-    next({
-      message: `no list found with id ${request.params.id}`,
-      statusCode: 404,
-    });
-  }
-});
-
-const fetchLists = wrapAsync(async (_request, response) => {
-  const lists = await List.find({}).populate('tasks', { list: 0 });
-
-  response.json(lists);
-});
-
 const deleteList = wrapAsync(async (request, response, next) => {
   const listToRemove = await List.findById(request.params.id);
 
@@ -62,4 +43,4 @@ const updateList = wrapAsync(async (request, response) => {
   response.json(result);
 });
 
-module.exports = { createList, fetchList, fetchLists, deleteList, updateList };
+module.exports = { createList, deleteList, updateList };

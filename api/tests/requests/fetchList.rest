@@ -1,1 +1,0 @@
-GET http://localhost:3001/api/lists/5f176a9a546e6c18835e31f0
