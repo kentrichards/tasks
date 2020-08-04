@@ -4,6 +4,7 @@ const connectToDb = require('./utils/db');
 const userRouter = require('./routes/users');
 const listRouter = require('./routes/lists');
 const taskRouter = require('./routes/tasks');
+const loginRouter = require('./routes/login');
 const errorHandler = require('./middleware/errorHandler');
 const requestLogger = require('./middleware/requestLogger');
 const unknownEndpoint = require('./middleware/unknownEndpoint');
@@ -25,6 +26,7 @@ app.use(requestLogger);
 app.use('/api/users', userRouter);
 app.use('/api/lists', listRouter);
 app.use('/api/tasks', taskRouter);
+app.use('/api/login', loginRouter);
 
 app.use(unknownEndpoint);
 
