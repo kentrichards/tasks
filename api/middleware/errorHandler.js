@@ -21,6 +21,11 @@ const errorHandler = (error, _request, response, _next) => {
       statusCode = 400;
       break;
 
+    case 'JsonWebTokenError':
+      message = 'invalid token';
+      statusCode = 401;
+      break;
+
     default:
       message = error.message || 'Internal server error';
       statusCode = error.statusCode || 500;
