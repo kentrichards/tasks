@@ -25,16 +25,7 @@ const createUser = wrapAsync(async (request, response, next) => {
   response.json(result);
 });
 
-const fetchUser = wrapAsync(async (request, response, next) => {
-  if (request.params.id !== request.user._id) {
-    next({
-      message: "cannot fetch another user's data",
-      statusCode: 403,
-    });
-
-    return;
-  }
-
+const fetchUser = wrapAsync(async (request, response) => {
   const userWithData = await User.findById(request.params.id).populate({
     path: 'lists',
     select: { user: 0 },

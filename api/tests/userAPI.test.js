@@ -74,23 +74,6 @@ describe('fetching a user', () => {
     const taskTexts = userTasks.map((t) => t.text);
     expect(taskTexts).toContain(helper.initialTasks[0].text);
   });
-
-  test('fetching another user returns an error', async () => {
-    // Login as the user we created above
-    const loginResponse = await api
-      .post('/api/login')
-      .send(helper.initialUser)
-      .expect(200)
-      .expect('Content-Type', /application\/json/);
-
-    const nonExistingId = helper.nonExistingId();
-
-    // Trying to fetch another user's data should return '403 Forbidden'
-    await api
-      .get(`/api/users/${nonExistingId}`)
-      .set('Authorization', `Bearer ${loginResponse.body.token}`)
-      .expect(403);
-  });
 });
 
 describe('creating a new user', () => {
