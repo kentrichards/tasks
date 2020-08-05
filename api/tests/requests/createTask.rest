@@ -1,8 +1,10 @@
 POST http://localhost:3001/api/tasks
 Content-Type: application/json
+Authorization: Bearer Token
 
 {
-    "text": "add more tests",
+    "text": "New task",
     "important": true,
-    "list": "5f1f095d3995c13f6933afb6"
+    "list": "ObjectId",
+    "user": "ObjectId"
 }

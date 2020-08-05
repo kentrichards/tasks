@@ -1,6 +1,9 @@
 POST http://localhost:3001/api/lists
 Content-Type: application/json
+Authorization: Bearer Token
+
 
 {
-    "name": "A brand new list!"
+    "name": "New list",
+    "user": "ObjectId"
 }

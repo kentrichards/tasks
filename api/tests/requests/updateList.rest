@@ -1,6 +1,7 @@
-PUT http://localhost:3001/api/lists/5f187c474dd814285523f57b
+PUT http://localhost:3001/api/lists/ObjectId
 Content-Type: application/json
+Authorization: Bearer Token
 
 {
-    "name": "A new name"
+    "name": "Updated list text"
 }

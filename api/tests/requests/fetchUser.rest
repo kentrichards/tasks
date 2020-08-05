@@ -1,2 +1,2 @@
-GET http://localhost:3001/api/users/ObjectID
-Authorization: bearer TOKEN
+GET http://localhost:3001/api/users/ObjectId
+Authorization: Bearer Token

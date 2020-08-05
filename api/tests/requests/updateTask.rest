@@ -1,9 +1,9 @@
-PUT http://localhost:3001/api/tasks/5f19bd30b237512a4f6a1e11
+PUT http://localhost:3001/api/tasks/ObjectId
 Content-Type: application/json
+Authorization: Bearer Token
 
 {
-    "text": "why is this broken",
+    "text": "Updated task text",
     "completed": false,
-    "important": true,
-    "list": "5f1778e269547bd56f1e85f6"
+    "important": false
 }
