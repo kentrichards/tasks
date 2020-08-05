@@ -48,7 +48,7 @@ taskSchema.pre('save', async function (next) {
 
 taskSchema.pre('remove', async function () {
   // Remove the task from the List.tasks array it was part of
-  await this.model('List').updateOne({ $pull: { tasks: this._id } });
+  await this.model('List').updateOne({ _id: this.list }, { $pull: { tasks: this._id } });
 });
 
 // Converts ObjectId to a string to avoid issues on the frontend

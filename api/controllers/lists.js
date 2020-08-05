@@ -1,6 +1,5 @@
 const wrapAsync = require('../middleware/wrapAsync');
 const List = require('../models/list');
-const Task = require('../models/task');
 
 const createList = wrapAsync(async (request, response) => {
   // TODO: Update so a user can only create lists for themselves
@@ -23,10 +22,8 @@ const deleteList = wrapAsync(async (request, response, next) => {
     return;
   }
 
-  // Delete the list and all of its tasks
-  // The list is removed from the User.lists array automatically in listSchema
+  // The list is removed from its user, and its tasks are deleted is listSchema
   await listToRemove.remove();
-  await Task.deleteMany({ list: listToRemove._id });
 
   // Return '204 No Content' in all cases
   response.status(204).end();

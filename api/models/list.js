@@ -41,7 +41,10 @@ listSchema.pre('save', async function (next) {
 
 listSchema.pre('remove', async function () {
   // Remove the list's id from the User.lists array it was in
-  await this.model('User').updateOne({ $pull: { lists: this._id } });
+  await this.model('User').updateOne({ _id: this.user }, { $pull: { lists: this._id } });
+
+  // Remove all of the tasks that were on the list
+  await this.model('Task').deleteMany({ list: this._id });
 });
 
 // Converts ObjectId to a string to avoid issues on the frontend
