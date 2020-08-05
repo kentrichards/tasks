@@ -8,6 +8,8 @@ const Task = require('../models/task');
 
 const api = supertest(app);
 
+jest.setTimeout(10000);
+
 // Initialize the test database before each test is run
 beforeEach(async () => {
   // Wipe the database

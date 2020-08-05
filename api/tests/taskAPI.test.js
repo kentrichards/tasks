@@ -3,10 +3,12 @@ const supertest = require('supertest');
 const app = require('../app');
 const helper = require('./helper');
 const User = require('../models/user');
-const Task = require('../models/task');
 const List = require('../models/list');
+const Task = require('../models/task');
 
 const api = supertest(app);
+
+jest.setTimeout(10000);
 
 // Initialize the test database before each test is run
 beforeEach(async () => {
