@@ -8,6 +8,8 @@ const Task = require('../models/task');
 
 const api = supertest(app);
 
+jest.setTimeout(10000);
+
 // Initialize the test database before each test is run
 beforeEach(async () => {
   // Wipe the database
@@ -17,37 +19,44 @@ beforeEach(async () => {
 
   // Create a user for all the lists to belong to
   const user = new User({
-    username: 'mike',
-    passwordHash: '$2b$10$CUMRgmbATfxC2xWInbZ8pOFTDrurjBtOq4s09H6sbqTzZt4ign9Cu',
+    username: helper.initialUser.username,
+    passwordHash: helper.initialUser.passwordHash,
   });
   await user.save();
 
-  // Re-populate the database using initialLists and user id
-  const promises = [];
-  helper.initialLists.forEach((list) => {
-    const newList = new List({ ...list, user: user._id });
-    promises.push(newList.save());
-  });
+  // Create two lists for the user
+  const listOne = new List({ ...helper.initialLists[0], user: user._id });
+  await listOne.save();
 
-  await Promise.all(promises);
+  const listTwo = new List({ ...helper.initialLists[1], user: user._id });
+  await listTwo.save();
 
-  // Add a task to the first list
-  const list = await List.findOne({ name: helper.initialLists[0].name });
+  // Add two tasks to listOne, and one to listTwo
+  const taskOne = new Task({ ...helper.initialTasks[0], list: listOne._id, user: user._id });
+  await taskOne.save();
 
-  const newTask = new Task({ text: 'test task', list: list._id });
-  await newTask.save();
+  const taskTwo = new Task({ ...helper.initialTasks[1], list: listOne._id, user: user._id });
+  await taskTwo.save();
+
+  const taskThree = new Task({ ...helper.initialTasks[2], list: listTwo._id, user: user._id });
+  await taskThree.save();
 });
 
 describe('adding new lists', () => {
   test('a valid list can be added', async () => {
-    // Get the user who all the lists belong to
-    const user = await User.findOne();
+    // Login as the user we created above
+    const response = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
 
-    const newList = { name: 'My New List', user: user._id };
+    const newList = { name: 'My New List', user: response.body.id };
 
     // Add new list to the database and verify it worked
     await api
       .post('/api/lists')
+      .set('Authorization', `Bearer ${response.body.token}`)
       .send(newList)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -62,10 +71,21 @@ describe('adding new lists', () => {
   });
 
   test('invalid list is not added', async () => {
-    const invalidList = { price: 100 };
+    // Login as the user we created above
+    const response = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const invalidList = { price: 100, user: response.body.id };
 
     // Server should reject our request
-    await api.post('/api/lists').send(invalidList).expect(400);
+    await api
+      .post('/api/lists')
+      .set('Authorization', `Bearer ${response.body.token}`)
+      .send(invalidList)
+      .expect(400);
 
     // Database should not have any new lists
     const listsAtEnd = await helper.getLists();
@@ -75,11 +95,21 @@ describe('adding new lists', () => {
 
 describe('deleting lists', () => {
   test('a list can be deleted', async () => {
+    // Login as the user we created above
+    const response = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const listsAtStart = await helper.getLists();
     const listToDelete = listsAtStart[0];
 
     // Server should return '204 No Content'
-    await api.delete(`/api/lists/${listToDelete.id}`).expect(204);
+    await api
+      .delete(`/api/lists/${listToDelete.id}`)
+      .set('Authorization', `Bearer ${response.body.token}`)
+      .expect(204);
 
     // Verify the database has one less list
     const listsAtEnd = await helper.getLists();
@@ -91,10 +121,20 @@ describe('deleting lists', () => {
   });
 
   test('deleting list with non-existing id returns an error', async () => {
+    // Login as the user we created above
+    const response = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const nonExistingId = helper.nonExistingId();
 
     // Server should return '404 Not Found'
-    await api.delete(`/api/lists/${nonExistingId}`).expect(404);
+    await api
+      .delete(`/api/lists/${nonExistingId}`)
+      .set('Authorization', `Bearer ${response.body.token}`)
+      .expect(404);
 
     // No lists should have been harmed in the making of this request
     const listsAtEnd = await helper.getLists();
@@ -102,90 +142,142 @@ describe('deleting lists', () => {
   });
 
   test('deleting a list deletes its tasks', async () => {
+    // Login as the user we created above
+    const response = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const listWithTask = await List.findOne({ name: helper.initialLists[0].name });
 
     // There should be tasks in the database initially
     const tasksAtStart = await helper.getTasks();
-    expect(tasksAtStart).toHaveLength(1);
+    expect(tasksAtStart).toHaveLength(helper.initialTasks.length);
 
-    await api.delete(`/api/lists/${listWithTask.id}`);
+    const numberOfTasksToBeDeleted = listWithTask.tasks.length;
+
+    await api
+      .delete(`/api/lists/${listWithTask.id}`)
+      .set('Authorization', `Bearer ${response.body.token}`)
+      .expect(204);
 
     // They should be gone after deleting the list
     const tasksAtEnd = await helper.getTasks();
-    expect(tasksAtEnd).toHaveLength(0);
+    expect(tasksAtEnd).toHaveLength(helper.initialTasks.length - numberOfTasksToBeDeleted);
   });
 });
 
 describe('updating a list', () => {
   test("a list's name can be changed", async () => {
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const listToUpdate = await List.findOne();
     const listUpdates = { name: 'new list name' };
 
-    const response = await api
+    const updateResponse = await api
       .put(`/api/lists/${listToUpdate._id}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .send(listUpdates)
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    expect(response.body.name).toEqual(listUpdates.name);
-    expect(response.body.name).not.toEqual(listToUpdate.name);
+    expect(updateResponse.body.name).toEqual(listUpdates.name);
+    expect(updateResponse.body.name).not.toEqual(listToUpdate.name);
   });
 
   test('list name cannot be set to empty string', async () => {
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const listToUpdate = await List.findOne();
     const emptyUpdate = { name: '' };
 
-    const response = await api
+    const updateResponse = await api
       .put(`/api/lists/${listToUpdate._id}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .send(emptyUpdate)
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
     // List name is not set to an empty string
-    expect(response.body.name).toEqual(listToUpdate.name);
+    expect(updateResponse.body.name).toEqual(listToUpdate.name);
   });
 
   test('list name cannot be set to null', async () => {
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const listToUpdate = await List.findOne();
     const nullUpdate = { name: null };
 
-    const response = await api
+    const updateResponse = await api
       .put(`/api/lists/${listToUpdate._id}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .send(nullUpdate)
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
     // List name is not set to null
-    expect(response.body.name).toEqual(listToUpdate.name);
+    expect(updateResponse.body.name).toEqual(listToUpdate.name);
   });
 
   test('user field cannot be updated', async () => {
-    const listToUpdate = await List.findOne();
-    const listUpdates = { user: helper.nonExistingId() };
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
 
-    const response = await api
+    const listToUpdate = await List.findOne();
+    const listUpdates = { user: loginResponse.body.id };
+
+    const updateResponse = await api
       .put(`/api/lists/${listToUpdate._id}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .send(listUpdates)
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
     // User field should not have changed
     // https://github.com/facebook/jest/issues/8475#issuecomment-537830532
-    expect(JSON.stringify(response.body.user)).toEqual(JSON.stringify(listToUpdate.user));
+    expect(JSON.stringify(updateResponse.body.user)).toEqual(JSON.stringify(listToUpdate.user));
   });
 
   test('tasks array cannot be updated', async () => {
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const listToUpdate = await List.findOne();
     const listUpdates = { tasks: [] };
 
-    const response = await api
+    const updateResponse = await api
       .put(`/api/lists/${listToUpdate._id}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .send(listUpdates)
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
     // Tasks field should not have changed
-    expect(response.body.tasks).not.toHaveLength(listUpdates.tasks.length);
+    expect(updateResponse.body.tasks).not.toHaveLength(listUpdates.tasks.length);
   });
 });
 
