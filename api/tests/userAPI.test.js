@@ -17,8 +17,8 @@ beforeEach(async () => {
 
   // Create a user for all the lists to belong to
   const user = new User({
-    username: 'mike',
-    passwordHash: helper.getPasswordHash(),
+    username: helper.initialUser.username,
+    passwordHash: helper.initialUser.passwordHash,
   });
   await user.save();
 
@@ -30,56 +30,66 @@ beforeEach(async () => {
   await listTwo.save();
 
   // Add two tasks to listOne, and one to listTwo
-  const taskOne = new Task({ ...helper.initialTasks[0], list: listOne._id });
+  const taskOne = new Task({ ...helper.initialTasks[0], list: listOne._id, user: user._id });
   await taskOne.save();
 
-  const taskTwo = new Task({ ...helper.initialTasks[1], list: listOne._id });
+  const taskTwo = new Task({ ...helper.initialTasks[1], list: listOne._id, user: user._id });
   await taskTwo.save();
 
-  const taskThree = new Task({ ...helper.initialTasks[2], list: listTwo._id });
+  const taskThree = new Task({ ...helper.initialTasks[2], list: listTwo._id, user: user._id });
   await taskThree.save();
 });
 
 describe('fetching a user', () => {
   test('fetching a user also fetches their lists and tasks', async () => {
-    // Get the user from the database for its id
-    const userFromDatabase = await User.findOne();
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
 
-    const response = await api
-      .get(`/api/users/${userFromDatabase._id}`)
+    const fetchResponse = await api
+      .get(`/api/users/${loginResponse.body.id}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
     // We only want the JSON content returned from the server
-    const userFromApi = response.body;
+    const userWithData = fetchResponse.body;
 
     // Verify the user has the right number of lists
-    expect(userFromApi.lists).toHaveLength(helper.initialLists.length);
+    expect(userWithData.lists).toHaveLength(helper.initialLists.length);
 
     // Verify the user's first list has the right number of tasks
-    expect(userFromApi.lists[0].tasks).toHaveLength(2);
+    expect(userWithData.lists[0].tasks).toHaveLength(2);
 
     // Lists were saved to the user properly
-    const userLists = userFromApi.lists;
+    const userLists = userWithData.lists;
     const listNames = userLists.map((l) => l.name);
     expect(listNames).toContain(helper.initialLists[0].name);
 
     // Tasks were saved to the list properly, and are accessible
-    const userTasks = userFromApi.lists[0].tasks;
+    const userTasks = userWithData.lists[0].tasks;
     const taskTexts = userTasks.map((t) => t.text);
     expect(taskTexts).toContain(helper.initialTasks[0].text);
   });
 
-  test('fetching a user with a non-existing id returns an error', async () => {
+  test('fetching another user returns an error', async () => {
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const nonExistingId = helper.nonExistingId();
 
-    await api.get(`/api/users/${nonExistingId}`).expect(404);
-  });
-
-  test('fetching a user with an invalid id returns an error', async () => {
-    const invalidId = 1;
-
-    await api.get(`/api/users/${invalidId}`).expect(400);
+    // Trying to fetch another user's data should return '403 Forbidden'
+    await api
+      .get(`/api/users/${nonExistingId}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
+      .expect(403);
   });
 });
 

@@ -26,7 +26,7 @@ const loginUser = wrapAsync(async (request, response, next) => {
 
   const token = jwt.sign(payload, process.env.SECRET);
 
-  response.status(200).send({ token, username: user.username });
+  response.status(200).send({ token, id: user._id });
 });
 
 module.exports = { loginUser };

@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 const List = require('../models/list');
 const Task = require('../models/task');
 
+const initialUser = {
+  username: 'mike',
+  password: 'bulls123',
+  passwordHash: '$2b$10$CUMRgmbATfxC2xWInbZ8pOFTDrurjBtOq4s09H6sbqTzZt4ign9Cu',
+};
+
 const initialLists = [
   {
     name: 'Books to Read',
@@ -42,7 +48,11 @@ const getTasks = async () => {
 // Returns a valid id that is not associated with any document
 const nonExistingId = () => mongoose.Types.ObjectId();
 
-// Returns a valid password hash, no need to generate one on demand
-const getPasswordHash = () => '$2b$10$CUMRgmbATfxC2xWInbZ8pOFTDrurjBtOq4s09H6sbqTzZt4ign9Cu';
-
-module.exports = { initialLists, initialTasks, getLists, getTasks, nonExistingId, getPasswordHash };
+module.exports = {
+  initialUser,
+  initialLists,
+  initialTasks,
+  getLists,
+  getTasks,
+  nonExistingId,
+};

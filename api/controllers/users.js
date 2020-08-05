@@ -25,25 +25,16 @@ const createUser = wrapAsync(async (request, response, next) => {
   response.json(result);
 });
 
-const fetchUser = wrapAsync(async (request, response, next) => {
+const fetchUser = wrapAsync(async (request, response) => {
   const userWithData = await User.findById(request.params.id).populate({
     path: 'lists',
     select: { user: 0 },
     populate: {
       path: 'tasks',
       model: 'Task',
-      select: { list: 0 },
+      select: { list: 0, user: 0 },
     },
   });
-
-  if (!userWithData) {
-    next({
-      message: `cannot find user with id ${request.params.id}`,
-      statusCode: 404,
-    });
-
-    return;
-  }
 
   response.json(userWithData);
 });
