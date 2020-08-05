@@ -15,44 +15,53 @@ beforeEach(async () => {
   await List.deleteMany({});
   await Task.deleteMany({});
 
-  // Create a user for our list to belong to
+  // Create a user for all the lists to belong to
   const user = new User({
-    username: 'mike',
-    passwordHash: '$2b$10$CUMRgmbATfxC2xWInbZ8pOFTDrurjBtOq4s09H6sbqTzZt4ign9Cu',
+    username: helper.initialUser.username,
+    passwordHash: helper.initialUser.passwordHash,
   });
   await user.save();
 
-  // Create a new list to save our tasks to
-  const list = new List({ name: 'test list', user: user._id });
-  await list.save();
+  // Create two lists for the user
+  const listOne = new List({ ...helper.initialLists[0], user: user._id });
+  await listOne.save();
 
-  // Add tasks to the database with initialTasks and our new list's id
-  const promises = [];
-  helper.initialTasks.forEach((task) => {
-    const newTask = new Task({
-      ...task,
-      list: list._id,
-    });
+  const listTwo = new List({ ...helper.initialLists[1], user: user._id });
+  await listTwo.save();
 
-    promises.push(newTask.save());
-  });
+  // Add two tasks to listOne, and one to listTwo
+  const taskOne = new Task({ ...helper.initialTasks[0], list: listOne._id, user: user._id });
+  await taskOne.save();
 
-  await Promise.all(promises);
+  const taskTwo = new Task({ ...helper.initialTasks[1], list: listOne._id, user: user._id });
+  await taskTwo.save();
+
+  const taskThree = new Task({ ...helper.initialTasks[2], list: listTwo._id, user: user._id });
+  await taskThree.save();
 });
 
 describe('adding new tasks', () => {
   test('a valid task can be added', async () => {
+    // Login as the user we created above
+    const response = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const listObject = await List.findOne();
 
     const newTask = {
       text: 'what i want to do today',
       important: true,
       list: listObject.id,
+      user: response.body.id,
     };
 
     // Add new task to the database and verify it worked
     await api
       .post('/api/tasks')
+      .set('Authorization', `Bearer ${response.body.token}`)
       .send(newTask)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -67,10 +76,21 @@ describe('adding new tasks', () => {
   });
 
   test('invalid task is not added', async () => {
+    // Login as the user we created above
+    const response = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const invalidTask = { content: 'wrong format' };
 
     // Server should reject our request
-    await api.post('/api/tasks').send(invalidTask).expect(400);
+    await api
+      .post('/api/tasks')
+      .set('Authorization', `Bearer ${response.body.token}`)
+      .send(invalidTask)
+      .expect(400);
 
     // Database should not have any new tasks
     const tasksAtEnd = await helper.getTasks();
@@ -78,12 +98,24 @@ describe('adding new tasks', () => {
   });
 
   test("cannot add task to list that doesn't exist", async () => {
+    // Login as the user we created above
+    const response = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const taskWithNonExistingList = {
       text: 'buy a puppy',
       list: helper.nonExistingId(),
+      user: response.body.id,
     };
 
-    await api.post('/api/tasks').send(taskWithNonExistingList).expect(404);
+    await api
+      .post('/api/tasks')
+      .set('Authorization', `Bearer ${response.body.token}`)
+      .send(taskWithNonExistingList)
+      .expect(404);
 
     // Database should not have added our task
     const tasksAtEnd = await helper.getTasks();
@@ -96,11 +128,21 @@ describe('adding new tasks', () => {
 
 describe('deleting tasks', () => {
   test('a task can be deleted', async () => {
+    // Login as the user we created above
+    const response = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const tasksAtStart = await helper.getTasks();
     const taskToDelete = tasksAtStart[0];
 
     // Server should return '204 No Content'
-    await api.delete(`/api/tasks/${taskToDelete.id}`).expect(204);
+    await api
+      .delete(`/api/tasks/${taskToDelete.id}`)
+      .set('Authorization', `Bearer ${response.body.token}`)
+      .expect(204);
 
     // Verify the database has one less task
     const tasksAtEnd = await helper.getTasks();
@@ -112,10 +154,20 @@ describe('deleting tasks', () => {
   });
 
   test('deleting task with non-existing id returns an error', async () => {
+    // Login as the user we created above
+    const response = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const nonExistingId = helper.nonExistingId();
 
     // Server should return '404 Not Found'
-    await api.delete(`/api/tasks/${nonExistingId}`).expect(404);
+    await api
+      .delete(`/api/tasks/${nonExistingId}`)
+      .set('Authorization', `Bearer ${response.body.token}`)
+      .expect(404);
 
     // No tasks should have been harmed in the making of this request
     const tasksAtEnd = await helper.getTasks();
@@ -123,11 +175,21 @@ describe('deleting tasks', () => {
   });
 
   test("deleting a task removes it from it's parent list", async () => {
+    // Login as the user we created above
+    const response = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     // Get a random task from the parent list
     const listAtStart = await List.findOne();
     const taskToDelete = listAtStart.tasks[0];
 
-    await api.delete(`/api/tasks/${taskToDelete}`).expect(204);
+    await api
+      .delete(`/api/tasks/${taskToDelete}`)
+      .set('Authorization', `Bearer ${response.body.token}`)
+      .expect(204);
 
     // Verify the task was deleted
     const tasksAtEnd = await helper.getTasks();
@@ -143,11 +205,19 @@ describe('deleting tasks', () => {
 
 describe('updating a task', () => {
   test("a task's name can be changed", async () => {
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const taskToUpdate = await Task.findOne();
     const taskUpdates = { text: 'new task text' };
 
     const response = await api
       .put(`/api/tasks/${taskToUpdate._id}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .send(taskUpdates)
       .expect(200)
       .expect('Content-Type', /application\/json/);
@@ -157,6 +227,13 @@ describe('updating a task', () => {
   });
 
   test('important and completed fields can be updated', async () => {
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const taskToUpdate = await Task.findOne();
 
     const importantAtStart = taskToUpdate.important;
@@ -170,6 +247,7 @@ describe('updating a task', () => {
 
     const response = await api
       .put(`/api/tasks/${taskToUpdate._id}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .send(taskUpdates)
       .expect(200)
       .expect('Content-Type', /application\/json/);
@@ -179,11 +257,19 @@ describe('updating a task', () => {
   });
 
   test('list field cannot be updated', async () => {
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const taskToUpdate = await Task.findOne();
     const taskUpdates = { list: helper.nonExistingId() };
 
     const response = await api
       .put(`/api/tasks/${taskToUpdate._id}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .send(taskUpdates)
       .expect(200)
       .expect('Content-Type', /application\/json/);
@@ -194,11 +280,19 @@ describe('updating a task', () => {
   });
 
   test('boolean fields cannot be set to null', async () => {
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const taskToUpdate = await Task.findOne();
     const taskUpdates = { important: null, completed: null };
 
     const response = await api
       .put(`/api/tasks/${taskToUpdate._id}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .send(taskUpdates)
       .expect(200)
       .expect('Content-Type', /application\/json/);
@@ -209,11 +303,19 @@ describe('updating a task', () => {
   });
 
   test('task text cannot be set to empty string', async () => {
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const taskToUpdate = await Task.findOne();
     const emptyUpdate = { text: '' };
 
     const response = await api
       .put(`/api/tasks/${taskToUpdate._id}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .send(emptyUpdate)
       .expect(200)
       .expect('Content-Type', /application\/json/);
@@ -223,11 +325,19 @@ describe('updating a task', () => {
   });
 
   test('task text cannot be set to null', async () => {
+    // Login as the user we created above
+    const loginResponse = await api
+      .post('/api/login')
+      .send(helper.initialUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
     const taskToUpdate = await Task.findOne();
     const nullUpdate = { text: null };
 
     const response = await api
       .put(`/api/tasks/${taskToUpdate._id}`)
+      .set('Authorization', `Bearer ${loginResponse.body.token}`)
       .send(nullUpdate)
       .expect(200)
       .expect('Content-Type', /application\/json/);
