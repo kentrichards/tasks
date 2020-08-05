@@ -33,18 +33,6 @@ const verifyToken = wrapAsync(async (request, _response, next) => {
     return;
   }
 
-  // If the user field doesn't match the token (in the case of a task or a list)
-  // and the id parameter also doesn't match (in the case of a user), reject the
-  // request, because it is trying to access a different user's content
-  if (request.body.user !== decodedToken.id && request.params.id !== decodedToken.id) {
-    next({
-      message: "cannot access, modify, or delete another user's resources",
-      statusCode: 403,
-    });
-
-    return;
-  }
-
   // Make the current user available to controllers by adding it to the request
   request.user = user;
   next();
