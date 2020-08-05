@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
-const List = require('./list');
 
 // Show the queries being sent to the database
-mongoose.set('debug', true);
+// mongoose.set('debug', true);
 
 const taskSchema = new mongoose.Schema({
   text: {
@@ -34,11 +33,11 @@ const taskSchema = new mongoose.Schema({
 });
 
 taskSchema.pre('save', async function (next) {
-  const listExists = await List.exists({ _id: this.list });
+  const listExists = await this.model('List').exists({ _id: this.list });
 
   if (listExists) {
     // Add the task to its parent list after it is saved
-    await List.findByIdAndUpdate(this.list, { $push: { tasks: this._id } });
+    await this.model('List').updateOne({ _id: this.list }, { $push: { tasks: this._id } });
   } else {
     next({
       message: `there is no list with id ${this.list}`,
@@ -49,7 +48,7 @@ taskSchema.pre('save', async function (next) {
 
 taskSchema.pre('remove', async function () {
   // Remove the task from the List.tasks array it was part of
-  await List.findByIdAndUpdate(this.list, { $pull: { tasks: this._id } });
+  await this.model('List').updateOne({ $pull: { tasks: this._id } });
 });
 
 // Converts ObjectId to a string to avoid issues on the frontend

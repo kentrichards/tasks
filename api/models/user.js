@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
 // Show the queries being sent to the database
-mongoose.set('debug', true);
+// mongoose.set('debug', true);
 
 const userSchema = new mongoose.Schema({
   username: {

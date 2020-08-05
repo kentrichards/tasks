@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
-const User = require('./user');
 
 // Show the queries being sent to the database
-mongoose.set('debug', true);
+// mongoose.set('debug', true);
 
 const listSchema = new mongoose.Schema({
   name: {
@@ -27,11 +26,11 @@ const listSchema = new mongoose.Schema({
 });
 
 listSchema.pre('save', async function (next) {
-  const userExists = await User.exists({ _id: this.user });
+  const userExists = await this.model('User').exists({ _id: this.user });
 
   if (userExists) {
     // Add the list to its parent user after it is saved
-    await User.findByIdAndUpdate(this.user, { $push: { lists: this._id } });
+    await this.model('User').updateOne({ _id: this.user }, { $push: { lists: this._id } });
   } else {
     next({
       message: `there is no user with id ${this.user}`,
@@ -42,7 +41,7 @@ listSchema.pre('save', async function (next) {
 
 listSchema.pre('remove', async function () {
   // Remove the list's id from the User.lists array it was in
-  await User.findByIdAndUpdate(this.user, { $pull: { lists: this._id } });
+  await this.model('User').updateOne({ $pull: { lists: this._id } });
 });
 
 // Converts ObjectId to a string to avoid issues on the frontend
