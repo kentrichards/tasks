@@ -12,7 +12,7 @@ const loginUser = wrapAsync(async (request, response, next) => {
 
   if (!(user && passwordCorrect)) {
     next({
-      message: 'invalid username or password',
+      message: 'Incorrect username or password',
       statusCode: 401,
     });
 
