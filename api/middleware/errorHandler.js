@@ -17,7 +17,7 @@ const errorHandler = (error, _request, response, _next) => {
 
     case 'ValidationError':
       // Database entry failed to meet the constraints defined by the schema
-      message = error.message || 'database entry does not meet schema requirements';
+      message = `"${error.errors.username.value}" is taken, try a different username`;
       statusCode = 400;
       break;
 
