@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const wrapAsync = require('../middleware/wrapAsync');
 const User = require('../models/user');
@@ -20,9 +21,17 @@ const createUser = wrapAsync(async (request, response, next) => {
 
   // Don't save the password to the database, just the hash
   const user = new User({ username, passwordHash });
-  const result = await user.save();
+  await user.save();
 
-  response.json(result);
+  // Sign the user in and return their token and id
+  const payload = {
+    username: user.username,
+    id: user._id,
+  };
+
+  const token = jwt.sign(payload, process.env.SECRET);
+
+  response.json({ token, id: user._id });
 });
 
 const fetchUser = wrapAsync(async (request, response) => {
