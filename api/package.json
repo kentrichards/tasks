@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "author": "Kent Richards",
+  "license": "MIT",
   "scripts": {
     "start": "NODE_ENV=production node index.js",
     "test": "NODE_ENV=test jest --verbose --runInBand"
   },
-  "author": "Kent Richards",
-  "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.0.0",
     "cors": "^2.8.5",

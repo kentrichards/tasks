@@ -1,54 +1,56 @@
-const wrapAsync = require('../middleware/wrapAsync');
-const Task = require('../models/task');
+const wrapAsync = require('../middleware/wrapAsync')
+const Task = require('../models/task')
 
 const createTask = wrapAsync(async (request, response) => {
-  const newTask = new Task(request.body);
-  const result = await newTask.save();
+  const newTask = new Task(request.body)
+  const result = await newTask.save()
 
   // Returns '201 Created' on success
-  response.status(201).json(result);
-});
+  response.status(201).json(result)
+})
 
 const deleteTask = wrapAsync(async (request, response, next) => {
-  const taskToRemove = await Task.findById(request.params.id);
+  const taskToRemove = await Task.findById(request.params.id)
 
   if (!taskToRemove) {
     next({
       message: `cannot find task with id ${request.params.id} to delete`,
-      statusCode: 404,
-    });
+      statusCode: 404
+    })
 
-    return;
+    return
   }
 
-  await taskToRemove.remove();
+  await taskToRemove.remove()
 
   // Return '204 No Content' in all cases
-  response.status(204).end();
-});
+  response.status(204).end()
+})
 
 const updateTask = wrapAsync(async (request, response) => {
-  const updatedTask = {};
+  const updatedTask = {}
 
   // Only allow updating of 'text', 'important', and 'completed' fields
-  const { text, important, completed } = request.body;
+  const { text, important, completed } = request.body
 
   if (text) {
-    updatedTask.text = text;
+    updatedTask.text = text
   }
 
   if (important !== null && important !== undefined) {
-    updatedTask.important = important;
+    updatedTask.important = important
   }
 
   if (completed !== null && completed !== undefined) {
-    updatedTask.completed = completed;
+    updatedTask.completed = completed
   }
 
   // { new: true } tells Mongoose to return the updated list, not the original
-  const result = await Task.findByIdAndUpdate(request.params.id, updatedTask, { new: true });
+  const result = await Task.findByIdAndUpdate(request.params.id, updatedTask, {
+    new: true
+  })
 
-  response.json(result);
-});
+  response.json(result)
+})
 
-module.exports = { createTask, deleteTask, updateTask };
+module.exports = { createTask, deleteTask, updateTask }
