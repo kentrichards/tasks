@@ -38,10 +38,6 @@ const Login = () => {
       return
     }
 
-    // User is signed in
-    setUsername('')
-    setPassword('')
-
     // Save the user's token and id to localStorage
     window.localStorage.setItem('savedUserJSON', JSON.stringify(result))
 
@@ -65,7 +61,7 @@ const Login = () => {
       </div>
       <form
         onSubmit={signInUser}
-        className="mt-8 mx-4 p-6 sm:p-8 rounded bg-white border-b-2 border-gray-300"
+        className="mt-8 mx-4 p-6 sm:p-8 rounded shadow bg-white"
       >
         <Form
           username={username}

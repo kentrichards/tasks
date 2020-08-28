@@ -9,10 +9,9 @@ const PrivateRoute = ({ path, children }) => {
   }
 
   return (
-    <Route
-      path={path}
-      render={() => (isLoggedIn ? children : <Redirect to="/login" />)}
-    />
+    <Route path={path}>
+      {isLoggedIn ? children : <Redirect to="/login" />}
+    </Route>
   )
 }
 

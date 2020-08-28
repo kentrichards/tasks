@@ -38,10 +38,6 @@ const CreateAccount = () => {
       return
     }
 
-    // Account has been created and user is signed in
-    setUsername('')
-    setPassword('')
-
     // Save the user's token and id to localStorage
     window.localStorage.setItem('savedUserJSON', JSON.stringify(result))
 
