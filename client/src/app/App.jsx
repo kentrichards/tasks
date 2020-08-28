@@ -8,17 +8,15 @@ import Register from '../features/user/Register'
 const App = () => (
   <BrowserRouter>
     <Switch>
-      <React.StrictMode>
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Route path="/register">
-          <Register />
-        </Route>
-        <PrivateRoute path="*">
-          <h1>user is signed in</h1>
-        </PrivateRoute>
-      </React.StrictMode>
+      <Route path="/login">
+        <Login />
+      </Route>
+      <Route path="/register">
+        <Register />
+      </Route>
+      <PrivateRoute path="*">
+        <h1>user is signed in</h1>
+      </PrivateRoute>
     </Switch>
   </BrowserRouter>
 )

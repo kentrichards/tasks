@@ -11,9 +11,11 @@
     "build:prod": "NODE_ENV=production parcel build src/index.html"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.4.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
     "tailwindcss": "^1.7.5"
   },
