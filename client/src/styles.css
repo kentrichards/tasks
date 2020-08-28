@@ -2,4 +2,36 @@
 
 @tailwind components;
 
+.link {
+  @apply text-blue-500;
+}
+
+.link:hover {
+  @apply underline;
+}
+
+.link:focus {
+  @apply outline-none underline;
+}
+
+.input {
+  @apply block w-full border h-10 mt-1 p-2 rounded;
+}
+
+.input:focus {
+  @apply outline-none border-blue-500;
+}
+
+.btn {
+  @apply border border-transparent bg-blue-500 text-white font-bold h-10 py-2 px-4 rounded flex justify-center items-center;
+}
+
+.btn:hover {
+  @apply bg-blue-400;
+}
+
+.btn:focus {
+  @apply outline-none bg-blue-600;
+}
+
 @tailwind utilities;
