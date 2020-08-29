@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
+import TaskItem from './TaskItem'
 import Button from '../../common/Button'
 
 const TaskView = () => {
@@ -21,7 +22,7 @@ const TaskView = () => {
 
         <ul>
           {tasks.map(task => (
-            <li key={task.id}>{task.text}</li>
+            <TaskItem key={task.id} task={task} />
           ))}
         </ul>
       </div>

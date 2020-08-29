@@ -47,3 +47,7 @@
 }
 
 @tailwind utilities;
+
+.task-divider:last-of-type {
+  display: none;
+}
