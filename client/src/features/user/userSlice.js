@@ -12,10 +12,13 @@ const userSlice = createSlice({
       state.id = id
       state.name = username
       state.dateCreated = dateCreated
+    },
+    setCurrentListId: (state, action) => {
+      state.currentListId = action.payload
     }
   }
 })
 
-export const { storeAccountInfo } = userSlice.actions
+export const { storeAccountInfo, setCurrentListId } = userSlice.actions
 
 export default userSlice.reducer

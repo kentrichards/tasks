@@ -34,4 +34,16 @@
   @apply outline-none bg-blue-600;
 }
 
+.menu-item {
+  @apply flex flex-row items-center w-full h-10 px-2 mb-px rounded text-blue-900;
+}
+
+.menu-item:hover {
+  @apply bg-white;
+}
+
+.menu-item:focus {
+  @apply outline-none bg-white;
+}
+
 @tailwind utilities;
