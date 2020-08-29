@@ -7,17 +7,15 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    storeData: (state, action) => {
-      const { id, username, lists, dateCreated } = action.payload
-
+    storeAccountInfo: (state, action) => {
+      const { id, username, dateCreated } = action.payload
       state.id = id
       state.name = username
-      state.lists = lists
       state.dateCreated = dateCreated
     }
   }
 })
 
-export const { storeData } = userSlice.actions
+export const { storeAccountInfo } = userSlice.actions
 
 export default userSlice.reducer

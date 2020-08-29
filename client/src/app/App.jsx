@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
+import MainLayout from './MainLayout'
 import PrivateRoute from './PrivateRoute'
 import Login from '../features/user/Login'
 import Register from '../features/user/Register'
@@ -15,7 +16,7 @@ const App = () => (
         <Register />
       </Route>
       <PrivateRoute path="*">
-        <h1>user is signed in</h1>
+        <MainLayout />
       </PrivateRoute>
     </Switch>
   </BrowserRouter>
