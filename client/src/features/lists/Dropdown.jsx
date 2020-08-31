@@ -3,7 +3,7 @@ import React from 'react'
 import { EditIcon, MoveIcon, DeleteIcon } from '../../common/Icons'
 
 const Dropdown = () => (
-  <div className="absolute right-0 mr-6 -mt-6 w-32 rounded shadow z-50">
+  <div className="absolute right-0 top-0 mr-6 w-32 rounded shadow z-20">
     <div className="rounded bg-white border">
       <button type="button" className="dropdown-item rounded-t">
         <EditIcon />

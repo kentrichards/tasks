@@ -29,14 +29,27 @@ const TaskItem = ({ taskId, text, completed, listId }) => {
         >
           {text}
         </span>
-        <button
-          type="button"
-          className="flex-shrink-0 relative inline-block text-left"
-          onClick={() => setDropdownOpen(!dropdownOpen)}
-        >
-          <MenuIcon styles={completed ? 'text-gray-400' : ''} />
-          {dropdownOpen && <Dropdown />}
-        </button>
+        <div className="relative">
+          <button
+            type="button"
+            className="flex-shrink-0 inline-block text-left"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          >
+            <MenuIcon styles={completed ? 'text-gray-400' : ''} />
+          </button>
+          {dropdownOpen && (
+            <>
+              <button
+                type="button"
+                tabIndex="-1"
+                className="fixed inset-0 h-full w-full z-10 cursor-default"
+                onClick={() => setDropdownOpen(false)}
+                aria-label="Close dropdown"
+              />
+              <Dropdown />
+            </>
+          )}
+        </div>
       </li>
       <hr className="task-divider mb-2" />
     </>
