@@ -46,6 +46,18 @@
   @apply outline-none bg-white;
 }
 
+.dropdown-item {
+  @apply flex justify-start items-center w-full p-2 text-sm leading-5 text-gray-700;
+}
+
+.dropdown-item:hover {
+  @apply bg-gray-100 text-gray-900;
+}
+
+.dropdown-item:focus {
+  @apply outline-none bg-gray-100 text-gray-900;
+}
+
 @tailwind utilities;
 
 .task-divider:last-of-type {

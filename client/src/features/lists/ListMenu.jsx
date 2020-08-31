@@ -29,18 +29,13 @@ const ListMenu = () => {
           />
         ))}
 
-        <MenuItem
-          text="Create new list"
-          icon={<CreateIcon />}
-          colour="text-green-400"
-        />
+        <MenuItem text="Create new list" icon={<CreateIcon />} />
 
         <hr className="mx-4 my-2 border-gray-300" />
 
         <MenuItem
           text="Sign out"
           icon={<ExitIcon />}
-          colour="text-red-400"
           handleClick={() => signOutUser()}
         />
       </ul>

@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const MenuItem = ({ text, icon, handleClick, colour, count }) => (
+const MenuItem = ({ text, icon, handleClick, count }) => (
   <li>
     <button
       type="button"
@@ -9,9 +9,7 @@ const MenuItem = ({ text, icon, handleClick, colour, count }) => (
       title={text}
       onClick={handleClick}
     >
-      <span className={`flex items-center justify-center text-xl ${colour}`}>
-        {icon}
-      </span>
+      <span className="flex items-center justify-center text-xl">{icon}</span>
       <span className="flex-grow ml-3 truncate text-left text-gray-800">
         {text}
       </span>
@@ -26,13 +24,11 @@ MenuItem.propTypes = {
   text: PropTypes.string.isRequired,
   icon: PropTypes.element.isRequired,
   handleClick: PropTypes.func,
-  colour: PropTypes.string,
   count: PropTypes.number
 }
 
 MenuItem.defaultProps = {
   handleClick: () => {},
-  colour: 'text-blue-700',
   count: 0
 }
 

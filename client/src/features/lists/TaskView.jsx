@@ -8,7 +8,9 @@ const TaskView = () => {
   const currentList = useSelector(state =>
     state.lists.find(list => list.id === state.user.currentListId)
   )
-  const { tasks } = currentList
+  const tasks = currentList.tasks
+    .slice()
+    .sort((x, y) => x.completed - y.completed)
 
   return (
     <div className="max-w-2xl flex-auto overflow-auto bg-white p-6 pt-16 shadow">
@@ -22,7 +24,13 @@ const TaskView = () => {
 
         <ul>
           {tasks.map(task => (
-            <TaskItem key={task.id} task={task} />
+            <TaskItem
+              key={task.id}
+              taskId={task.id}
+              text={task.text}
+              completed={task.completed}
+              listId={currentList.id}
+            />
           ))}
         </ul>
       </div>
