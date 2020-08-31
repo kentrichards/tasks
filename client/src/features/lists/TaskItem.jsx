@@ -29,7 +29,7 @@ const TaskItem = ({ taskId, text, completed, listId }) => {
         >
           {text}
         </span>
-        <div className="relative">
+        <div className="relative flex items-center">
           <button
             type="button"
             className="flex-shrink-0 inline-block text-left"

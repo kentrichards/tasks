@@ -1,12 +1,13 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
 import MenuItem from './MenuItem'
 import { setCurrentListId } from '../user/userSlice'
-import { ListIcon, CreateIcon, ExitIcon } from '../../common/Icons'
+import { CloseIcon, ListIcon, CreateIcon, ExitIcon } from '../../common/Icons'
 
-const ListMenu = () => {
+const ListMenu = ({ isOpen, setIsOpen }) => {
   const history = useHistory()
   const dispatch = useDispatch()
   const lists = useSelector(state => state.lists)
@@ -17,8 +18,15 @@ const ListMenu = () => {
   }
 
   return (
-    <div className="flex-auto flex-grow-0 flex-shrink-0 overflow-auto w-56 mx-4 py-4">
-      <ul className="flex flex-col w-full mt-24 mb-2 pt-4">
+    <div className={isOpen ? 'sidebar block' : 'sidebar'}>
+      <button
+        type="button"
+        className="p-1 rounded hover:bg-white focus:bg-white focus:outline-none"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <CloseIcon styles="sm:hidden" />
+      </button>
+      <ul className="flex flex-col w-full sm:mt-24 mb-2 sm:pt-4">
         {lists.map(list => (
           <MenuItem
             key={list.id}
@@ -41,6 +49,11 @@ const ListMenu = () => {
       </ul>
     </div>
   )
+}
+
+ListMenu.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  setIsOpen: PropTypes.func.isRequired
 }
 
 export default ListMenu

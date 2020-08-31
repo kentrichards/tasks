@@ -58,6 +58,16 @@
   @apply outline-none bg-gray-100 text-gray-900;
 }
 
+.sidebar {
+  @apply w-full h-full z-30 p-3 hidden fixed flex-grow-0 flex-shrink-0 overflow-auto mx-4 bg-gray-200;
+}
+
+@screen sm {
+  .sidebar {
+    @apply static block w-56 px-0 py-4;
+  }
+}
+
 @tailwind utilities;
 
 .task-divider:last-of-type {

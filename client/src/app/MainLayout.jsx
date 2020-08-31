@@ -9,6 +9,7 @@ import ListMenu from '../features/lists/ListMenu'
 import TaskView from '../features/lists/TaskView'
 
 const MainLayout = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [dataLoaded, setDataLoaded] = useState(false)
   const dispatch = useDispatch()
 
@@ -40,8 +41,8 @@ const MainLayout = () => {
         </div>
       ) : (
         <div className="flex justify-center h-full">
-          <ListMenu />
-          <TaskView />
+          <ListMenu isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+          <TaskView openSidebar={() => setSidebarOpen(true)} />
         </div>
       )}
     </div>
