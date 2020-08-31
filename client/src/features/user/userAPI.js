@@ -1,8 +1,4 @@
-let baseUrl = 'http://localhost:3001/api/users'
-
-if (process.env.NODE_ENV === 'production') {
-  baseUrl = 'https://aqueous-retreat-28973.herokuapp.com/api/users'
-}
+const baseUrl = 'https://boiling-sierra-54801.herokuapp.com/api/users'
 
 const register = async (username, password) => {
   if (username.length < 4) {
