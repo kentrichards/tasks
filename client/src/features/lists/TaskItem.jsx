@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 
 import Dropdown from './Dropdown'
-import { toggleCompleted } from './listsSlice'
+import { toggleCompleted } from '../../app/actions'
 import { CircleIcon, CheckIcon, MenuIcon } from '../../common/Icons'
 
 const TaskItem = ({ taskId, text, completed, listId }) => {

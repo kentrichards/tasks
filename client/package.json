@@ -6,7 +6,7 @@
   "author": "Kent Richards",
   "license": "MIT",
   "scripts": {
-    "clean": "rm dist/bundle.js",
+    "clean": "rm dist/*",
     "start": "NODE_ENV=development parcel src/index.html",
     "build:prod": "NODE_ENV=production parcel build src/index.html"
   },

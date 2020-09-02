@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
 import MenuItem from './MenuItem'
-import { setCurrentListId } from '../user/userSlice'
+import { setCurrentListId } from '../../app/actions'
 import { CloseIcon, ListIcon, CreateIcon, ExitIcon } from '../../common/Icons'
 
 const ListMenu = ({ isOpen, setIsOpen }) => {

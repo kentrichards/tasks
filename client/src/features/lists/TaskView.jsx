@@ -7,8 +7,9 @@ import Button from '../../common/Button'
 import { HamburgerIcon } from '../../common/Icons'
 
 const TaskView = ({ openSidebar }) => {
+  // Sort the tasks so completed tasks are at the bottom
   const currentList = useSelector(state =>
-    state.lists.find(list => list.id === state.user.currentListId)
+    state.lists.find(list => list.id === state.currentListId)
   )
   const tasks = currentList.tasks
     .slice()

@@ -3,8 +3,7 @@ import { useDispatch } from 'react-redux'
 
 import Spinner from '../common/Spinner'
 import userAPI from '../features/user/userAPI'
-import { storeLists } from '../features/lists/listsSlice'
-import { storeAccountInfo, setCurrentListId } from '../features/user/userSlice'
+import { storeData, setCurrentListId } from './actions'
 import ListMenu from '../features/lists/ListMenu'
 import TaskView from '../features/lists/TaskView'
 
@@ -16,8 +15,7 @@ const MainLayout = () => {
   const fetchUserData = async ({ id, token }) => {
     const result = await userAPI.fetchData({ id, token })
 
-    dispatch(storeAccountInfo({ ...result }))
-    dispatch(storeLists(result.lists))
+    dispatch(storeData({ ...result }))
 
     if (result.lists.length > 0) {
       dispatch(setCurrentListId(result.lists[0].id))
