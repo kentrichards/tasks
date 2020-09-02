@@ -10,7 +10,9 @@ import { CloseIcon, ListIcon, CreateIcon, ExitIcon } from '../../common/Icons'
 const ListMenu = ({ isOpen, setIsOpen }) => {
   const history = useHistory()
   const dispatch = useDispatch()
+
   const lists = useSelector(state => state.lists)
+  const currentListId = useSelector(state => state.currentListId)
 
   const signOutUser = () => {
     window.localStorage.removeItem('savedUserJSON')
@@ -34,6 +36,7 @@ const ListMenu = ({ isOpen, setIsOpen }) => {
             icon={<ListIcon />}
             count={list.tasks.length}
             handleClick={() => dispatch(setCurrentListId(list.id))}
+            isActive={list.id === currentListId}
           />
         ))}
 

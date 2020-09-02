@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const MenuItem = ({ text, icon, handleClick, count }) => (
+const MenuItem = ({ text, icon, handleClick, count, isActive }) => (
   <li>
     <button
       type="button"
-      className="menu-item"
+      className={isActive ? 'menu-item bg-white' : 'menu-item'}
       title={text}
       onClick={handleClick}
     >
@@ -24,12 +24,14 @@ MenuItem.propTypes = {
   text: PropTypes.string.isRequired,
   icon: PropTypes.element.isRequired,
   handleClick: PropTypes.func,
-  count: PropTypes.number
+  count: PropTypes.number,
+  isActive: PropTypes.bool
 }
 
 MenuItem.defaultProps = {
   handleClick: () => {},
-  count: 0
+  count: 0,
+  isActive: false
 }
 
 export default MenuItem
