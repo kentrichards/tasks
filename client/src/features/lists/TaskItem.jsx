@@ -6,7 +6,7 @@ import Dropdown from './Dropdown'
 import { toggleCompleted } from '../../app/actions'
 import { CircleIcon, CheckIcon, MenuIcon } from '../../common/Icons'
 
-const TaskItem = ({ taskId, text, completed, listId }) => {
+const TaskItem = ({ taskId, text, completed }) => {
   const dispatch = useDispatch()
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
@@ -16,7 +16,7 @@ const TaskItem = ({ taskId, text, completed, listId }) => {
         <button
           type="button"
           className="flex-shrink-0"
-          onClick={() => dispatch(toggleCompleted({ taskId, listId }))}
+          onClick={() => dispatch(toggleCompleted(taskId))}
         >
           {completed ? <CheckIcon /> : <CircleIcon />}
         </button>
@@ -46,7 +46,7 @@ const TaskItem = ({ taskId, text, completed, listId }) => {
                 onClick={() => setDropdownOpen(false)}
                 aria-label="Close dropdown"
               />
-              <Dropdown />
+              <Dropdown taskId={taskId} />
             </>
           )}
         </div>
@@ -59,8 +59,7 @@ const TaskItem = ({ taskId, text, completed, listId }) => {
 TaskItem.propTypes = {
   taskId: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
-  completed: PropTypes.bool.isRequired,
-  listId: PropTypes.string.isRequired
+  completed: PropTypes.bool.isRequired
 }
 
 export default TaskItem

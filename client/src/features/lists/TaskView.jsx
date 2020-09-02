@@ -39,7 +39,6 @@ const TaskView = ({ openSidebar }) => {
               taskId={task.id}
               text={task.text}
               completed={task.completed}
-              listId={currentList.id}
             />
           ))}
         </ul>

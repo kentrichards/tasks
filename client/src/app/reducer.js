@@ -18,13 +18,22 @@ const reducer = createReducer(initialState, {
   },
   // Task reducers
   TOGGLE_COMPLETED: (state, action) => {
-    const { taskId } = action.payload
     const { lists, currentListId } = state
 
-    const currentList = lists.find(list => list.id === currentListId)
-    const taskToChange = currentList.tasks.find(task => task.id === taskId)
+    const listToChange = lists.find(list => list.id === currentListId)
+    const taskToChange = listToChange.tasks.find(
+      task => task.id === action.payload
+    )
 
     taskToChange.completed = !taskToChange.completed
+  },
+  DELETE_TASK: (state, action) => {
+    const { lists, currentListId } = state
+
+    const listToChange = lists.find(list => list.id === currentListId)
+    listToChange.tasks = listToChange.tasks.filter(
+      task => task.id !== action.payload
+    )
   }
 })
 
