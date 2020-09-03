@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import Modal from 'react-modal'
 
+import Modal from './Modal'
 import TaskItem from './TaskItem'
 import Button from '../../common/Button'
 import { HamburgerIcon } from '../../common/Icons'
@@ -20,13 +20,7 @@ const TaskView = ({ openSidebar }) => {
 
   return (
     <div className="max-w-2xl flex-auto overflow-auto bg-white p-3 sm:p-6 sm:pt-16 shadow">
-      <Modal
-        isOpen={showModal}
-        className="absolute w-full max-w-sm sm:max-w-md p-4 bg-white rounded shadow"
-        overlayClassName="fixed flex justify-center inset-0 p-8 pt-48"
-        style={{ overlay: { backgroundColor: 'rgba(0, 0, 0, 0.50' } }}
-        onRequestClose={() => setShowModal(false)}
-      >
+      <Modal isOpen={showModal} onRequestClose={() => setShowModal(false)}>
         <h2 className="text-2xl font-semibold leading-none">Add Task</h2>
         <textarea className="input max-w-64 h-32 my-4 resize-none" />
         <div className="flex justify-between">
@@ -79,7 +73,5 @@ const TaskView = ({ openSidebar }) => {
 TaskView.propTypes = {
   openSidebar: PropTypes.func.isRequired
 }
-
-Modal.setAppElement('#app')
 
 export default TaskView
