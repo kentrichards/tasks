@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { createReducer } from '@reduxjs/toolkit'
+import { createReducer, nanoid } from '@reduxjs/toolkit'
 
 const initialState = {
   id: '',
@@ -26,6 +26,19 @@ const reducer = createReducer(initialState, {
     )
 
     taskToChange.completed = !taskToChange.completed
+  },
+  ADD_TASK: (state, action) => {
+    const { lists, currentListId } = state
+
+    const newTask = {
+      id: nanoid(),
+      text: action.payload,
+      date: new Date().toISOString(),
+      completed: false
+    }
+
+    const listToChange = lists.find(list => list.id === currentListId)
+    listToChange.tasks.push(newTask)
   },
   DELETE_TASK: (state, action) => {
     const { lists, currentListId } = state
