@@ -40,6 +40,15 @@ const reducer = createReducer(initialState, {
     const listToChange = lists.find(list => list.id === currentListId)
     listToChange.tasks.push(newTask)
   },
+  EDIT_TASK: (state, action) => {
+    const { lists, currentListId } = state
+    const { id, text } = action.payload
+
+    const listToChange = lists.find(list => list.id === currentListId)
+    const taskToChange = listToChange.tasks.find(task => task.id === id)
+
+    taskToChange.text = text
+  },
   DELETE_TASK: (state, action) => {
     const { lists, currentListId } = state
 

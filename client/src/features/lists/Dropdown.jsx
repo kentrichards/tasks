@@ -5,13 +5,17 @@ import { useDispatch } from 'react-redux'
 import { deleteTask } from '../../app/actions'
 import { EditIcon, MoveIcon, DeleteIcon } from '../../common/Icons'
 
-const Dropdown = ({ taskId }) => {
+const Dropdown = ({ taskId, onEditClicked }) => {
   const dispatch = useDispatch()
 
   return (
     <div className="absolute right-0 top-0 mr-6 w-32 rounded shadow z-20">
       <div className="rounded bg-white border">
-        <button type="button" className="dropdown-item rounded-t">
+        <button
+          type="button"
+          className="dropdown-item rounded-t"
+          onClick={() => onEditClicked()}
+        >
           <EditIcon />
           <span className="pl-2">Edit</span>
         </button>
@@ -31,8 +35,10 @@ const Dropdown = ({ taskId }) => {
     </div>
   )
 }
+
 Dropdown.propTypes = {
-  taskId: PropTypes.string.isRequired
+  taskId: PropTypes.string.isRequired,
+  onEditClicked: PropTypes.func.isRequired
 }
 
 export default Dropdown

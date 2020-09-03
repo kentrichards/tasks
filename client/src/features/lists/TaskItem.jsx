@@ -3,16 +3,29 @@ import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 
 import Dropdown from './Dropdown'
+import EditTaskModal from './EditTaskModal'
 import { toggleCompleted } from '../../app/actions'
 import { CircleIcon, CheckIcon, MenuIcon } from '../../common/Icons'
 
 const TaskItem = ({ taskId, text, completed }) => {
   const dispatch = useDispatch()
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+
+  const onEditClicked = () => {
+    setShowEditModal(true)
+    setDropdownOpen(false)
+  }
 
   return (
     <>
       <li className="flex items-center mb-2 text-lg">
+        <EditTaskModal
+          taskId={taskId}
+          initialText={text}
+          isOpen={showEditModal}
+          setIsOpen={setShowEditModal}
+        />
         <button
           type="button"
           className="flex-shrink-0"
@@ -46,7 +59,11 @@ const TaskItem = ({ taskId, text, completed }) => {
                 onClick={() => setDropdownOpen(false)}
                 aria-label="Close dropdown"
               />
-              <Dropdown taskId={taskId} />
+              <Dropdown
+                taskId={taskId}
+                text={text}
+                onEditClicked={() => onEditClicked()}
+              />
             </>
           )}
         </div>
