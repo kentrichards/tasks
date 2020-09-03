@@ -34,6 +34,18 @@
   @apply outline-none bg-blue-600;
 }
 
+.btn-outline {
+  @apply border border-gray-300 bg-white text-gray-700 font-bold h-10 py-2 px-4 rounded flex justify-center items-center;
+}
+
+.btn-outline:hover {
+  @apply border-gray-400 text-gray-800;
+}
+
+.btn-outline:focus {
+  @apply outline-none border-gray-500 text-gray-900;
+}
+
 .menu-item {
   @apply flex flex-row items-center w-full h-10 px-2 mb-px rounded text-blue-900;
 }
@@ -59,7 +71,7 @@
 }
 
 .sidebar {
-  @apply w-full h-full z-30 p-3 hidden fixed flex-grow-0 flex-shrink-0 overflow-auto mx-4 bg-gray-200;
+  @apply w-screen h-screen z-30 p-3 hidden fixed flex-grow-0 flex-shrink-0 overflow-auto mx-4 bg-gray-200;
 }
 
 @screen sm {

@@ -14,6 +14,11 @@ const ListMenu = ({ isOpen, setIsOpen }) => {
   const lists = useSelector(state => state.lists)
   const currentListId = useSelector(state => state.currentListId)
 
+  const onListSelection = listId => {
+    dispatch(setCurrentListId(listId))
+    setIsOpen(false)
+  }
+
   const signOutUser = () => {
     window.localStorage.removeItem('savedUserJSON')
     history.push('/login')
@@ -35,7 +40,7 @@ const ListMenu = ({ isOpen, setIsOpen }) => {
             text={list.name}
             icon={<ListIcon />}
             count={list.tasks.length}
-            handleClick={() => dispatch(setCurrentListId(list.id))}
+            handleClick={() => onListSelection(list.id)}
             isActive={list.id === currentListId}
           />
         ))}

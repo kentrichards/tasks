@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
+import Modal from 'react-modal'
 
 import TaskItem from './TaskItem'
 import Button from '../../common/Button'
 import { HamburgerIcon } from '../../common/Icons'
 
 const TaskView = ({ openSidebar }) => {
+  const [showModal, setShowModal] = useState(false)
+
   // Sort the tasks so completed tasks are at the bottom
   const currentList = useSelector(state =>
     state.lists.find(list => list.id === state.currentListId)
@@ -17,19 +20,45 @@ const TaskView = ({ openSidebar }) => {
 
   return (
     <div className="max-w-2xl flex-auto overflow-auto bg-white p-3 sm:p-6 sm:pt-16 shadow">
+      <Modal
+        isOpen={showModal}
+        className="absolute w-full max-w-sm sm:max-w-md p-4 bg-white rounded shadow"
+        overlayClassName="fixed flex justify-center inset-0 p-8 pt-48"
+        style={{ overlay: { backgroundColor: 'rgba(0, 0, 0, 0.50' } }}
+        onRequestClose={() => setShowModal(false)}
+      >
+        <h2 className="text-2xl font-semibold leading-none">Add Task</h2>
+        <textarea className="input max-w-64 h-32 my-4 resize-none" />
+        <div className="flex justify-between">
+          <button
+            className="btn-outline"
+            type="button"
+            onClick={() => setShowModal(false)}
+          >
+            Cancel
+          </button>
+          <button className="btn" type="button">
+            Submit
+          </button>
+        </div>
+      </Modal>
       <button
         type="button"
-        className="p-1 rounded hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
+        className="sm:hidden p-1 rounded hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
         onClick={() => openSidebar()}
       >
-        <HamburgerIcon styles="sm:hidden" />
+        <HamburgerIcon />
       </button>
       <div>
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-4xl font-bold truncate" title={currentList.name}>
             {currentList.name}
           </h1>
-          <Button text="Add task" styles="shadow flex-shrink-0" />
+          <Button
+            text="Add task"
+            styles="shadow flex-shrink-0"
+            handleClick={() => setShowModal(true)}
+          />
         </div>
 
         <ul>
@@ -50,5 +79,7 @@ const TaskView = ({ openSidebar }) => {
 TaskView.propTypes = {
   openSidebar: PropTypes.func.isRequired
 }
+
+Modal.setAppElement('#app')
 
 export default TaskView
