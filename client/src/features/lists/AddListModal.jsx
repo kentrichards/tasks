@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 
-import Modal from './Modal'
+import Modal from '../../common/Modal'
 import { addList } from '../../app/actions'
 
 const AddListModal = ({ isOpen, setIsOpen }) => {

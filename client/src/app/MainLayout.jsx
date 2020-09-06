@@ -5,7 +5,7 @@ import Spinner from '../common/Spinner'
 import userAPI from '../features/user/userAPI'
 import { storeData, setCurrentListId } from './actions'
 import ListMenu from '../features/lists/ListMenu'
-import TaskView from '../features/lists/TaskView'
+import TaskView from '../features/tasks/TaskView'
 
 const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)

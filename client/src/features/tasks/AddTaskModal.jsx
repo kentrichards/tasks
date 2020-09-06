@@ -2,22 +2,22 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 
-import Modal from './Modal'
-import { editTask } from '../../app/actions'
+import Modal from '../../common/Modal'
+import { addTask } from '../../app/actions'
 
-const EditTaskModal = ({ taskId, initialText, isOpen, setIsOpen }) => {
+const AddTaskModal = ({ isOpen, setIsOpen }) => {
   const dispatch = useDispatch()
-  const [taskText, setTaskText] = useState(initialText)
+  const [taskText, setTaskText] = useState('')
 
   const onModalClose = type => {
     if (type === 'cancel') {
-      setTaskText(initialText)
+      setTaskText('')
       setIsOpen(false)
       return
     }
 
     if (taskText) {
-      dispatch(editTask({ id: taskId, text: taskText }))
+      dispatch(addTask(taskText))
       setTaskText('')
       setIsOpen(false)
     }
@@ -25,7 +25,7 @@ const EditTaskModal = ({ taskId, initialText, isOpen, setIsOpen }) => {
 
   return (
     <Modal isOpen={isOpen}>
-      <h2 className="text-2xl font-semibold leading-none">Edit Task</h2>
+      <h2 className="text-2xl font-semibold leading-none">Add Task</h2>
       <textarea
         className="input max-w-64 h-32 my-4 resize-none"
         value={taskText}
@@ -51,11 +51,9 @@ const EditTaskModal = ({ taskId, initialText, isOpen, setIsOpen }) => {
   )
 }
 
-EditTaskModal.propTypes = {
-  taskId: PropTypes.string.isRequired,
-  initialText: PropTypes.string.isRequired,
+AddTaskModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   setIsOpen: PropTypes.func.isRequired
 }
 
-export default EditTaskModal
+export default AddTaskModal
