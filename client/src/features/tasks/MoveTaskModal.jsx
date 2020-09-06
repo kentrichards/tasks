@@ -15,7 +15,13 @@ const MoveTaskModal = ({ task, isOpen, setIsOpen }) => {
   )
   const otherLists = lists.filter(list => list.id !== currentList.id)
 
-  const onModalClose = () => {
+  const onModalClose = type => {
+    if (type === 'cancel') {
+      setSelectedList(null)
+      setIsOpen(false)
+      return
+    }
+
     if (selectedList) {
       dispatch(moveTask({ taskToMove: task, newListId: selectedList }))
       setIsOpen(false)
