@@ -60,6 +60,18 @@ const reducer = createReducer(initialState, {
 
     taskToChange.text = text
   },
+  MOVE_TASK: (state, action) => {
+    const { lists, currentListId } = state
+    const { taskToMove, newListId } = action.payload
+
+    // Add task to the new list
+    const newList = lists.find(list => list.id === newListId)
+    newList.tasks.push(taskToMove)
+
+    // Remove task from old list
+    const oldList = lists.find(list => list.id === currentListId)
+    oldList.tasks = oldList.tasks.filter(task => task.id !== taskToMove.id)
+  },
   DELETE_TASK: (state, action) => {
     const { lists, currentListId } = state
 

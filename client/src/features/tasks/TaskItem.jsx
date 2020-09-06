@@ -4,16 +4,23 @@ import { useDispatch } from 'react-redux'
 
 import Dropdown from './Dropdown'
 import EditTaskModal from './EditTaskModal'
+import MoveTaskModal from './MoveTaskModal'
 import { toggleCompleted } from '../../app/actions'
 import { CircleIcon, CheckIcon, MenuIcon } from '../../common/Icons'
 
-const TaskItem = ({ taskId, text, completed }) => {
+const TaskItem = ({ task, completed }) => {
   const dispatch = useDispatch()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [showMoveModal, setShowMoveModal] = useState(false)
 
   const onEditClicked = () => {
     setShowEditModal(true)
+    setDropdownOpen(false)
+  }
+
+  const onMoveClicked = () => {
+    setShowMoveModal(true)
     setDropdownOpen(false)
   }
 
@@ -21,15 +28,20 @@ const TaskItem = ({ taskId, text, completed }) => {
     <>
       <li className="flex items-center mb-2 text-lg">
         <EditTaskModal
-          taskId={taskId}
-          initialText={text}
+          taskId={task.id}
+          initialText={task.text}
           isOpen={showEditModal}
           setIsOpen={setShowEditModal}
+        />
+        <MoveTaskModal
+          task={task}
+          isOpen={showMoveModal}
+          setIsOpen={setShowMoveModal}
         />
         <button
           type="button"
           className="flex-shrink-0"
-          onClick={() => dispatch(toggleCompleted(taskId))}
+          onClick={() => dispatch(toggleCompleted(task.id))}
         >
           {completed ? <CheckIcon /> : <CircleIcon />}
         </button>
@@ -40,7 +52,7 @@ const TaskItem = ({ taskId, text, completed }) => {
               : 'flex-grow mx-3'
           }
         >
-          {text}
+          {task.text}
         </span>
         <div className="relative flex items-center">
           <button
@@ -60,9 +72,10 @@ const TaskItem = ({ taskId, text, completed }) => {
                 aria-label="Close dropdown"
               />
               <Dropdown
-                taskId={taskId}
-                text={text}
+                taskId={task.id}
+                text={task.text}
                 onEditClicked={() => onEditClicked()}
+                onMoveClicked={() => onMoveClicked()}
               />
             </>
           )}
@@ -74,8 +87,10 @@ const TaskItem = ({ taskId, text, completed }) => {
 }
 
 TaskItem.propTypes = {
-  taskId: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
+  task: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired
+  }).isRequired,
   completed: PropTypes.bool.isRequired
 }
 

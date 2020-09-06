@@ -42,12 +42,7 @@ const TaskView = ({ openSidebar }) => {
 
         <ul>
           {tasks.map(task => (
-            <TaskItem
-              key={task.id}
-              taskId={task.id}
-              text={task.text}
-              completed={task.completed}
-            />
+            <TaskItem key={task.id} task={task} completed={task.completed} />
           ))}
         </ul>
       </div>

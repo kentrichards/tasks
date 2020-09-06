@@ -58,6 +58,18 @@
   @apply outline-none bg-white;
 }
 
+.select-item {
+  @apply flex flex-row items-center w-full h-10 px-2 bg-white;
+}
+
+.select-item:hover {
+  @apply bg-gray-200;
+}
+
+.select-item:focus {
+  @apply outline-none bg-gray-200;
+}
+
 .dropdown-item {
   @apply flex justify-start items-center w-full p-2 text-sm leading-5 text-gray-700;
 }
