@@ -9,14 +9,14 @@ const Modal = props => {
     <ReactModal
       // Appearance
       style={{ overlay: { backgroundColor: 'rgba(0, 0, 0, 0.50' } }}
-      className="absolute w-full max-w-sm sm:max-w-md p-4 bg-white rounded shadow focus:outline-none"
-      overlayClassName="fixed flex justify-center h-screen w-screen inset-0 z-50 p-8 pt-48"
+      className="absolute w-full max-w-md focus:outline-none"
+      overlayClassName="fixed flex justify-center h-screen w-screen inset-0 z-50 pt-48"
       // Default functionality
       shouldCloseOnOverlayClick={false}
       // Custom functionality
       isOpen={isOpen}
     >
-      {children}
+      <div className="mx-4 p-6 bg-white rounded shadow">{children}</div>
     </ReactModal>
   )
 }

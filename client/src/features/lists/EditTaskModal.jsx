@@ -7,18 +7,18 @@ import { editTask } from '../../app/actions'
 
 const EditTaskModal = ({ taskId, initialText, isOpen, setIsOpen }) => {
   const dispatch = useDispatch()
-  const [taskValue, setTaskValue] = useState(initialText)
+  const [taskText, setTaskText] = useState(initialText)
 
   const onModalClose = type => {
     if (type === 'cancel') {
-      setTaskValue(initialText)
+      setTaskText(initialText)
       setIsOpen(false)
       return
     }
 
-    if (taskValue) {
-      dispatch(editTask({ id: taskId, text: taskValue }))
-      setTaskValue('')
+    if (taskText) {
+      dispatch(editTask({ id: taskId, text: taskText }))
+      setTaskText('')
       setIsOpen(false)
     }
   }
@@ -28,8 +28,8 @@ const EditTaskModal = ({ taskId, initialText, isOpen, setIsOpen }) => {
       <h2 className="text-2xl font-semibold leading-none">Edit Task</h2>
       <textarea
         className="input max-w-64 h-32 my-4 resize-none"
-        value={taskValue}
-        onChange={e => setTaskValue(e.target.value)}
+        value={taskText}
+        onChange={e => setTaskText(e.target.value)}
       />
       <div className="flex justify-between">
         <button

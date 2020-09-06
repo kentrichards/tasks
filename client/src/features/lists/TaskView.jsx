@@ -35,7 +35,7 @@ const TaskView = ({ openSidebar }) => {
           </h1>
           <Button
             text="Add task"
-            styles="shadow flex-shrink-0"
+            styles="shadow flex-shrink-0 ml-2"
             handleClick={() => setShowModal(true)}
           />
         </div>

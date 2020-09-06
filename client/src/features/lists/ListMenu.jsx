@@ -1,13 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
 import MenuItem from './MenuItem'
+import AddListModal from './AddListModal'
 import { setCurrentListId } from '../../app/actions'
 import { CloseIcon, ListIcon, CreateIcon, ExitIcon } from '../../common/Icons'
 
 const ListMenu = ({ isOpen, setIsOpen }) => {
+  const [showModal, setShowModal] = useState(false)
+
   const history = useHistory()
   const dispatch = useDispatch()
 
@@ -26,6 +29,7 @@ const ListMenu = ({ isOpen, setIsOpen }) => {
 
   return (
     <div className={isOpen ? 'sidebar block' : 'sidebar'}>
+      <AddListModal isOpen={showModal} setIsOpen={setShowModal} />
       <button
         type="button"
         className="p-1 rounded hover:bg-white focus:bg-white focus:outline-none"
@@ -45,7 +49,11 @@ const ListMenu = ({ isOpen, setIsOpen }) => {
           />
         ))}
 
-        <MenuItem text="Create new list" icon={<CreateIcon />} />
+        <MenuItem
+          text="Create new list"
+          icon={<CreateIcon />}
+          handleClick={() => setShowModal(true)}
+        />
 
         <hr className="mx-4 my-2 border-gray-300" />
 

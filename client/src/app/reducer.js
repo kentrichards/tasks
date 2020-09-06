@@ -16,6 +16,17 @@ const reducer = createReducer(initialState, {
   SET_CURRENT_LIST_ID: (state, action) => {
     state.currentListId = action.payload
   },
+  ADD_LIST: (state, action) => {
+    const newList = {
+      id: nanoid(),
+      name: action.payload,
+      date: new Date().toISOString(),
+      user: state.id,
+      tasks: []
+    }
+
+    state.lists.push(newList)
+  },
   // Task reducers
   TOGGLE_COMPLETED: (state, action) => {
     const { lists, currentListId } = state
