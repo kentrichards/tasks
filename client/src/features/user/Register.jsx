@@ -46,7 +46,7 @@ const CreateAccount = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto my-16">
+    <div className="max-w-md mx-auto py-16">
       <div className="text-center">
         <h1 className="text-2xl sm:text-3xl font-semibold">
           Create a new account
