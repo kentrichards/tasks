@@ -19,7 +19,8 @@ const MainLayout = () => {
 
     if (result.lists.length > 0) {
       dispatch(setCurrentListId(result.lists[0].id))
-      // Else dispatch non-ideal state SVG
+    } else {
+      dispatch(setCurrentListId(''))
     }
 
     setDataLoaded(true)

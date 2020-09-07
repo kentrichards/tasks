@@ -25,7 +25,9 @@ const reducer = createReducer(initialState, {
       tasks: []
     }
 
+    // Save the list and switch to it
     state.lists.push(newList)
+    state.currentListId = newList.id
   },
   // Task reducers
   TOGGLE_COMPLETED: (state, action) => {

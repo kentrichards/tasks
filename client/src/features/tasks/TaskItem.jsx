@@ -48,8 +48,8 @@ const TaskItem = ({ task, completed }) => {
         <span
           className={
             completed
-              ? 'flex-grow mx-3 text-gray-400 line-through'
-              : 'flex-grow mx-3'
+              ? 'flex-grow mx-3 break-all text-gray-400 line-through'
+              : 'flex-grow mx-3 break-all'
           }
         >
           {task.text}

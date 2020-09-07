@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import TaskItem from './TaskItem'
 import Button from '../../common/Button'
 import AddTaskModal from './AddTaskModal'
+import NonIdealState from './NonIdealState'
 import { HamburgerIcon } from '../../common/Icons'
 
 const TaskView = ({ openSidebar }) => {
@@ -14,9 +15,11 @@ const TaskView = ({ openSidebar }) => {
   const currentList = useSelector(state =>
     state.lists.find(list => list.id === state.currentListId)
   )
-  const tasks = currentList.tasks
-    .slice()
-    .sort((x, y) => x.completed - y.completed)
+
+  let tasks = []
+  if (currentList) {
+    tasks = currentList.tasks.slice().sort((x, y) => x.completed - y.completed)
+  }
 
   return (
     <div className="max-w-2xl flex-auto overflow-auto bg-white p-3 sm:p-6 sm:pt-16 shadow">
@@ -28,24 +31,31 @@ const TaskView = ({ openSidebar }) => {
       >
         <HamburgerIcon />
       </button>
-      <div>
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-4xl font-bold truncate" title={currentList.name}>
-            {currentList.name}
-          </h1>
-          <Button
-            text="Add task"
-            styles="shadow flex-shrink-0 ml-2"
-            handleClick={() => setShowModal(true)}
-          />
-        </div>
+      {currentList ? (
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h1
+              className="text-4xl font-bold truncate"
+              title={currentList.name}
+            >
+              {currentList.name}
+            </h1>
+            <Button
+              text="Add task"
+              styles="shadow flex-shrink-0 ml-2"
+              handleClick={() => setShowModal(true)}
+            />
+          </div>
 
-        <ul>
-          {tasks.map(task => (
-            <TaskItem key={task.id} task={task} completed={task.completed} />
-          ))}
-        </ul>
-      </div>
+          <ul>
+            {tasks.map(task => (
+              <TaskItem key={task.id} task={task} completed={task.completed} />
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <NonIdealState />
+      )}
     </div>
   )
 }
