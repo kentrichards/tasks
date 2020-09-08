@@ -13,13 +13,12 @@ const MoveTaskModal = ({ task, isOpen, setIsOpen }) => {
   const currentList = useSelector(selectCurrentList)
   const otherLists = useSelector(selectOtherLists)
 
-  const onModalClose = type => {
-    if (type === 'cancel') {
-      setSelectedList(null)
-      setIsOpen(false)
-      return
-    }
+  const onClose = () => {
+    setSelectedList(null)
+    setIsOpen(false)
+  }
 
+  const onSubmit = () => {
     if (selectedList) {
       dispatch(moveTask({ taskToMove: task, newListId: selectedList }))
       setIsOpen(false)
@@ -27,7 +26,7 @@ const MoveTaskModal = ({ task, isOpen, setIsOpen }) => {
   }
 
   return (
-    <Modal isOpen={isOpen}>
+    <Modal isOpen={isOpen} handleClose={onClose} handleSubmit={onSubmit}>
       <h2 className="text-2xl font-semibold leading-none">Move Task</h2>
       <div className="pt-4">
         <h3 className="text-lg font-semibold text-blue-700">Current List</h3>
@@ -51,22 +50,6 @@ const MoveTaskModal = ({ task, isOpen, setIsOpen }) => {
             </button>
           ))}
         </ul>
-      </div>
-      <div className="flex justify-between">
-        <button
-          className="btn-outline"
-          type="button"
-          onClick={() => onModalClose('cancel')}
-        >
-          Cancel
-        </button>
-        <button
-          className="btn"
-          type="button"
-          onClick={() => onModalClose('submit')}
-        >
-          Submit
-        </button>
       </div>
     </Modal>
   )

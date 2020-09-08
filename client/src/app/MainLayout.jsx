@@ -8,9 +8,9 @@ import ListMenu from '../features/lists/ListMenu'
 import TaskView from '../features/tasks/TaskView'
 
 const MainLayout = () => {
+  const dispatch = useDispatch()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [dataLoaded, setDataLoaded] = useState(false)
-  const dispatch = useDispatch()
 
   const fetchUserData = async ({ id, token }) => {
     const result = await userAPI.fetchData({ id, token })
