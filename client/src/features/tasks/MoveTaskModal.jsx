@@ -4,16 +4,14 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import Modal from '../../common/Modal'
 import { moveTask } from '../../app/actions'
+import { selectCurrentList, selectOtherLists } from '../../app/selectors'
 
 const MoveTaskModal = ({ task, isOpen, setIsOpen }) => {
   const dispatch = useDispatch()
   const [selectedList, setSelectedList] = useState(null)
 
-  const lists = useSelector(state => state.lists)
-  const currentList = useSelector(state =>
-    state.lists.find(list => list.id === state.currentListId)
-  )
-  const otherLists = lists.filter(list => list.id !== currentList.id)
+  const currentList = useSelector(selectCurrentList)
+  const otherLists = useSelector(selectOtherLists)
 
   const onModalClose = type => {
     if (type === 'cancel') {

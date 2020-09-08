@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import MenuItem from './MenuItem'
 import AddListModal from './AddListModal'
 import { setCurrentListId } from '../../app/actions'
+import { selectLists, selectCurrentList } from '../../app/selectors'
 import { CloseIcon, ListIcon, CreateIcon, ExitIcon } from '../../common/Icons'
 
 const ListMenu = ({ isOpen, setIsOpen }) => {
@@ -14,8 +15,8 @@ const ListMenu = ({ isOpen, setIsOpen }) => {
   const history = useHistory()
   const dispatch = useDispatch()
 
-  const lists = useSelector(state => state.lists)
-  const currentListId = useSelector(state => state.currentListId)
+  const lists = useSelector(selectLists)
+  const currentListId = useSelector(selectCurrentList)
 
   const onListSelection = listId => {
     dispatch(setCurrentListId(listId))

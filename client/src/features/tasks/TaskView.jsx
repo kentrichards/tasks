@@ -7,14 +7,13 @@ import Button from '../../common/Button'
 import AddTaskModal from './AddTaskModal'
 import NonIdealState from './NonIdealState'
 import { HamburgerIcon } from '../../common/Icons'
+import { selectCurrentList } from '../../app/selectors'
 
 const TaskView = ({ openSidebar }) => {
   const [showModal, setShowModal] = useState(false)
 
   // Sort the tasks so completed tasks are at the bottom
-  const currentList = useSelector(state =>
-    state.lists.find(list => list.id === state.currentListId)
-  )
+  const currentList = useSelector(selectCurrentList)
 
   let tasks = []
   if (currentList) {
