@@ -2,7 +2,7 @@ const wrapAsync = require('../middleware/wrapAsync')
 const Task = require('../models/task')
 
 const createTask = wrapAsync(async (request, response) => {
-  const newTask = new Task(request.body)
+  const newTask = new Task({ ...request.body, user: request.user._id })
   const result = await newTask.save()
 
   // Returns '201 Created' on success
