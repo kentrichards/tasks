@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { createReducer, nanoid } from '@reduxjs/toolkit'
 
+import { addList } from './thunks'
+
 const initialState = {
   id: '',
   username: '',
@@ -16,18 +18,10 @@ const reducer = createReducer(initialState, {
   SET_CURRENT_LIST_ID: (state, action) => {
     state.currentListId = action.payload
   },
-  ADD_LIST: (state, action) => {
-    const newList = {
-      id: nanoid(),
-      name: action.payload,
-      date: new Date().toISOString(),
-      user: state.id,
-      tasks: []
-    }
-
+  [addList.fulfilled]: (state, action) => {
     // Save the list and switch to it
-    state.lists.push(newList)
-    state.currentListId = newList.id
+    state.lists.push(action.payload)
+    state.currentListId = action.payload.id
   },
   // Task reducers
   TOGGLE_COMPLETED: (state, action) => {
