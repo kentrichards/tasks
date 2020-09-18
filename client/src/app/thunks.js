@@ -1,9 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
-import listAPI from '../features/lists/listsAPI'
+import listsAPI from '../features/lists/listsAPI'
+import tasksAPI from '../features/tasks/tasksAPI'
 
+// List thunks
 const addList = createAsyncThunk('ADD_LIST', async listName => {
-  return listAPI.addList(listName)
+  return listsAPI.addList(listName)
 })
 
-export { addList }
+// Task thunks
+const addTask = createAsyncThunk('ADD_TASK', async task => {
+  return tasksAPI.addTask(task.text, task.listId)
+})
+
+export { addList, addTask }

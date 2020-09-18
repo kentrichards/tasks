@@ -22,7 +22,11 @@ const TaskView = ({ openSidebar }) => {
 
   return (
     <div className="max-w-2xl flex-auto overflow-auto bg-white p-3 sm:p-6 sm:pt-16 shadow">
-      <AddTaskModal isOpen={showModal} setIsOpen={setShowModal} />
+      <AddTaskModal
+        isOpen={showModal}
+        setIsOpen={setShowModal}
+        listId={currentList.id}
+      />
       <button
         type="button"
         className="sm:hidden p-1 rounded hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"

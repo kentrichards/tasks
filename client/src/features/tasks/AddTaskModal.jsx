@@ -3,9 +3,9 @@ import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 
 import Modal from '../../common/Modal'
-import { addTask } from '../../app/actions'
+import { addTask } from '../../app/thunks'
 
-const AddTaskModal = ({ isOpen, setIsOpen }) => {
+const AddTaskModal = ({ isOpen, setIsOpen, listId }) => {
   const dispatch = useDispatch()
   const [taskText, setTaskText] = useState('')
 
@@ -16,7 +16,7 @@ const AddTaskModal = ({ isOpen, setIsOpen }) => {
 
   const onSubmit = () => {
     if (taskText) {
-      dispatch(addTask(taskText))
+      dispatch(addTask({ text: taskText, listId }))
       setTaskText('')
       setIsOpen(false)
     }
@@ -36,7 +36,8 @@ const AddTaskModal = ({ isOpen, setIsOpen }) => {
 
 AddTaskModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  setIsOpen: PropTypes.func.isRequired
+  setIsOpen: PropTypes.func.isRequired,
+  listId: PropTypes.string.isRequired
 }
 
 export default AddTaskModal
