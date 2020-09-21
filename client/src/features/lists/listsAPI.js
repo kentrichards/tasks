@@ -1,8 +1,9 @@
 const baseUrl = 'https://boiling-sierra-54801.herokuapp.com/api/lists'
 
-const { token } = JSON.parse(window.localStorage.getItem('savedUserJSON'))
-
 const addList = async name => {
+  const userJSON = window.localStorage.getItem('savedUserJSON')
+  const { token } = JSON.parse(userJSON)
+
   const response = await fetch(baseUrl, {
     method: 'POST',
     headers: {
