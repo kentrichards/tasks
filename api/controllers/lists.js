@@ -25,8 +25,7 @@ const deleteList = wrapAsync(async (request, response, next) => {
   // The list is removed from its user, and its tasks are deleted is listSchema
   await listToRemove.remove()
 
-  // Return '204 No Content' in all cases
-  response.status(204).end()
+  response.json(listToRemove._id)
 })
 
 const updateList = wrapAsync(async (request, response) => {
