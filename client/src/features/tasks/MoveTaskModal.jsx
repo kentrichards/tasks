@@ -34,7 +34,7 @@ const MoveTaskModal = ({ task, isOpen, setIsOpen }) => {
       </div>
       <div className="py-4">
         <h3 className="text-lg font-semibold text-blue-700">Select New List</h3>
-        <ul className="h-20 border rounded overflow-y-auto">
+        <ul className="h-40 border rounded overflow-y-auto">
           {otherLists.map(list => (
             <button
               key={list.id}

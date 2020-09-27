@@ -5,12 +5,20 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import MenuItem from './MenuItem'
 import AddListModal from './AddListModal'
+import ManageListsModal from './ManageListsModal'
 import { setCurrentListId } from '../../app/actions'
 import { selectLists, selectCurrentList } from '../../app/selectors'
-import { CloseIcon, ListIcon, CreateIcon, ExitIcon } from '../../common/Icons'
+import {
+  CloseIcon,
+  ListIcon,
+  CreateIcon,
+  ExitIcon,
+  ManageIcon
+} from '../../common/Icons'
 
 const ListMenu = ({ isOpen, setIsOpen }) => {
-  const [showModal, setShowModal] = useState(false)
+  const [showAddListModal, setShowAddListModal] = useState(false)
+  const [showManageListsModal, setShowManageListsModal] = useState(false)
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -30,7 +38,13 @@ const ListMenu = ({ isOpen, setIsOpen }) => {
 
   return (
     <div className={isOpen ? 'sidebar block' : 'sidebar'}>
-      <AddListModal isOpen={showModal} setIsOpen={setShowModal} />
+      <AddListModal isOpen={showAddListModal} setIsOpen={setShowAddListModal} />
+
+      <ManageListsModal
+        isOpen={showManageListsModal}
+        setIsOpen={setShowManageListsModal}
+      />
+
       <button
         type="button"
         className="p-1 rounded hover:bg-white focus:bg-white focus:outline-none"
@@ -38,6 +52,7 @@ const ListMenu = ({ isOpen, setIsOpen }) => {
       >
         <CloseIcon styles="sm:hidden" />
       </button>
+
       <ul className="flex flex-col w-full sm:mt-24 mb-2 sm:pt-4">
         {lists.map(list => (
           <MenuItem
@@ -53,7 +68,13 @@ const ListMenu = ({ isOpen, setIsOpen }) => {
         <MenuItem
           text="Create new list"
           icon={<CreateIcon />}
-          handleClick={() => setShowModal(true)}
+          handleClick={() => setShowAddListModal(true)}
+        />
+
+        <MenuItem
+          text="Manage lists"
+          icon={<ManageIcon />}
+          handleClick={() => setShowManageListsModal(true)}
         />
 
         <hr className="mx-4 my-2 border-gray-300" />
