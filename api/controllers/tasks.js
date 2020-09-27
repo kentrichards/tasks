@@ -23,8 +23,7 @@ const deleteTask = wrapAsync(async (request, response, next) => {
 
   await taskToRemove.remove()
 
-  // Return '204 No Content' in all cases
-  response.status(204).end()
+  response.json(taskToRemove._id)
 })
 
 const updateTask = wrapAsync(async (request, response) => {
